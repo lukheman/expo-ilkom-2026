@@ -1,0 +1,85 @@
+{% extends 'seller/base.twig' %}
+{% block seller_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2">Halo, {{ store ? store.name : 'Penjual' }}!</h1>
+  {% if store and store.booth_number %}
+    <p class="text-secondary">
+      Stan {{ store.booth_number }} • {{ store.opening_hours|default('') }}
+    </p>
+  {% else %}
+    <div class="alert alert-warning">
+      Lengkapi profil toko + nomor stan di <a href="/seller/store">Profil Toko</a>.
+    </div>
+  {% endif %}
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card p-3 h-100" style="border-top:4px solid #00880d">
+        <small class="text-secondary">Omzet hari ini</small><h2 class="price mb-0">
+          Rp {{ revenueToday|number_format(0, ',', '.') }}
+        </h2>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 h-100" style="border-top:4px solid #ffc41c">
+        <small class="text-secondary">Total omzet</small><h2 class="mb-0">
+          Rp {{ revenueTotal|number_format(0, ',', '.') }}
+        </h2>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 h-100" style="border-top:4px solid #e52535">
+        <small class="text-secondary">Perlu diproses</small><h2 class="mb-0">{{ activeOrders }}</h2>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card p-3 h-100" style="border-top:4px solid #4a7ddb">
+        <small class="text-secondary">Selesai / produk aktif</small><h2 class="mb-0">
+          {{ doneCount }} / {{ productCount }}
+        </h2>
+      </div>
+    </div>
+  </div>
+  <h4>Pesanan terbaru</h4>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100" data-paging="off">
+      <thead>
+        <tr>
+          <th>Kode</th>
+          <th>Pemesan</th>
+          <th>Total</th>
+          <th>Bayar</th>
+          <th>Status</th>
+          <th class="no-sort">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td><strong>{{ o.pickup_code }}</strong></td>
+            <td>{{ o.customer_name|e }}</td>
+            <td>Rp {{ o.total|number_format(0, ',', '.') }}</td>
+            <td>
+              {% if o.payment_status == 'Lunas' %}
+                <span class="badge bg-success">Lunas</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Belum bayar</span>
+              {% endif %}
+            </td>
+            <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+            <td>
+              <a class="btn btn-sm btn-primary" href="/seller/orders">Kelola <i class="bi bi-arrow-right"></i></a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-secondary">Belum ada pesanan.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

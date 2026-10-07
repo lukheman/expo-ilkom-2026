@@ -1,0 +1,88 @@
+{% extends 'seller/base.twig' %}
+{% block seller_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/seller">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Pesanan</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2"><i class="bi bi-receipt"></i> Pesanan Masuk</h1>
+  <div class="d-flex gap-2 flex-wrap mb-3 filter-bar">
+    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-outline-secondary{% endif %}" href="/seller/orders">
+      Semua
+    </a>{% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
+      <a
+        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-outline-secondary{% endif %}"
+        href="/seller/orders?status={{ s }}"
+      >
+        {{ s }}
+      </a>
+    {% endfor %}
+  </div>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100">
+      <thead>
+        <tr>
+          <th>Kode</th>
+          <th>Pemesan</th>
+          <th>Total</th>
+          <th>Bayar</th>
+          <th>Status</th>
+          <th class="no-sort">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td>
+              <strong>{{ o.pickup_code }}</strong>{% if o.note %}
+                <br /><small class="text-secondary">“{{ o.note|e }}”</small>
+              {% endif %}
+            </td>
+            <td>
+              {{ o.customer_name|e }}{% if o.buyer_phone %}
+                <br /><small>{{ o.buyer_phone|e }}</small>
+              {% endif %}
+            </td>
+            <td>
+              Rp {{ o.total|number_format(0, ',', '.') }}<br /><small class="text-secondary">{{ o.payment_method }}</small>
+            </td>
+            <td>
+              {% if o.payment_status == 'Lunas' %}
+                <span class="badge bg-success">Lunas</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Belum bayar</span><br /><a
+                  href="/seller/paid/{{ o.id }}"
+                  class="btn btn-sm btn-success mt-1"
+                >
+                  <i class="bi bi-cash-coin"></i> Tandai lunas
+                </a>
+              {% endif %}
+            </td>
+            <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+            <td>
+              <div class="table-actions" role="group">
+                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Diproses">
+                  <i class="bi bi-arrow-repeat"></i> Proses
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Siap%20Diambil">
+                  <i class="bi bi-bag-check"></i> Siap diambil
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Selesai">
+                  <i class="bi bi-check-lg"></i> Selesai
+                </a>
+                <a class="btn btn-sm btn-outline-danger" href="/seller/status/{{ o.id }}/Dibatalkan">
+                  <i class="bi bi-x-lg"></i> Batal
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-secondary">Tidak ada pesanan.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

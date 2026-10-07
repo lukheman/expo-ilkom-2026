@@ -1,0 +1,58 @@
+{% extends 'seller/base.twig' %}
+{% block seller_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/seller">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Profil Toko</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2"><i class="bi bi-gear"></i> Profil Toko</h1>
+  <div class="card p-4" style="max-width:640px">
+    <form method="post" action="/seller/updateStore" class="row g-2">
+      <div class="col-md-8">
+        <label class="form-label">Nama toko *</label><input
+          class="form-control"
+          name="name"
+          value="{{ store ? store.name|e : '' }}"
+          maxlength="100"
+          required
+        />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Nomor stan</label><input
+          class="form-control"
+          name="booth"
+          value="{{ store and store.booth_number ? store.booth_number|e : '' }}"
+          maxlength="10"
+          placeholder="A4"
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Deskripsi</label><textarea class="form-control" name="description" maxlength="500">
+          {{ store ? store.description|e : '' }}
+        </textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Lokasi/alamat stan</label><input
+          class="form-control"
+          name="address"
+          value="{{ store and store.address ? store.address|e : '' }}"
+          maxlength="255"
+          placeholder="Zona kuliner, dekat panggung"
+        />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Jam buka</label><input
+          class="form-control"
+          name="hours"
+          value="{{ store and store.opening_hours ? store.opening_hours|e : '' }}"
+          maxlength="50"
+          placeholder="09:00 - 21:00"
+        />
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan profil</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'seller/base.twig' %}
+{% block seller_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/seller">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="/seller/products">Produk</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Ubah</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2">Ubah Produk</h1>
+  <div class="card p-4" style="max-width:640px">
+    <form method="post" action="/seller/update/{{ p.id }}" enctype="multipart/form-data" class="row g-2">
+      <div class="col-12">
+        <label class="form-label">Nama produk *</label><input
+          class="form-control"
+          name="name"
+          value="{{ p.name|e }}"
+          maxlength="100"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Kategori</label><select class="form-select" name="category">
+          <option value="">
+            — Tanpa kategori —
+          </option>
+          {% for c in categories %}
+            <option value="{{ c.id }}" {{ p.category_id == c.id ? 'selected' : '' }}>
+              {{ c.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Deskripsi</label><input
+          class="form-control"
+          name="description"
+          value="{{ p.description|e }}"
+          maxlength="500"
+        />
+      </div>
+      <div class="col-6">
+        <label class="form-label">Harga (Rp) *</label><input
+          class="form-control"
+          name="price"
+          type="number"
+          min="0"
+          value="{{ p.price }}"
+          required
+        />
+      </div>
+      <div class="col-6">
+        <label class="form-label">Stok *</label><input
+          class="form-control"
+          name="stock"
+          type="number"
+          min="0"
+          value="{{ p.stock }}"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Foto saat ini</label><br />{% if p.image %}
+          <img src="{{ p.image }}" alt="" style="width:120px;height:120px;object-fit:cover;border-radius:12px" />
+        {% else %}
+          <span class="text-secondary">Belum ada foto</span>
+        {% endif %}<br /><br /><label class="form-label">
+          Ganti foto <small class="text-secondary">(kosongkan bila tidak diganti)</small>
+        </label><input
+          class="form-control"
+          type="file"
+          name="photo"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+        /><br /><label class="form-label">URL foto</label><input
+          class="form-control"
+          name="image"
+          value="{{ p.image|e }}"
+          maxlength="255"
+        />
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan</button><a class="btn btn-outline-secondary" href="/seller/products">Batal</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
