@@ -1,0 +1,60 @@
+{% extends 'admin/base.twig' %}
+{% block admin_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Pesanan</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2">Semua Pesanan</h1>
+  <div class="d-flex gap-2 flex-wrap mb-3 filter-bar">
+    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-outline-secondary{% endif %}" href="/admin/orders">
+      Semua
+    </a>{% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
+      <a
+        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-outline-secondary{% endif %}"
+        href="/admin/orders?status={{ s }}"
+      >
+        {{ s }}
+      </a>
+    {% endfor %}
+  </div>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100">
+      <thead>
+        <tr>
+          <th>Kode</th>
+          <th>Stan</th>
+          <th>Pemesan</th>
+          <th>Total</th>
+          <th>Bayar</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+          <tr>
+            <td><strong>{{ o.pickup_code }}</strong></td>
+            <td>{{ o.store_name|e }}</td>
+            <td>{{ o.customer_name|e }}</td>
+            <td>
+              Rp {{ o.total|number_format(0, ',', '.') }}<br /><small class="text-secondary">{{ o.payment_method }}</small>
+            </td>
+            <td>
+              {% if o.payment_status == 'Lunas' %}
+                <span class="badge bg-success">Lunas</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Belum bayar</span>
+              {% endif %}
+            </td>
+            <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-secondary">Tidak ada pesanan.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

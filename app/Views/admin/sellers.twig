@@ -1,0 +1,198 @@
+{% extends 'admin/base.twig' %}
+{% block admin_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Penjual</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="gf-h2 mb-0">
+      Kelola Penjual{% if pending %}
+        <span class="badge bg-danger">{{ pending }} menunggu</span>
+      {% endif %}
+    </h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+      <i class="bi bi-plus-lg"></i> Tambah
+    </button>
+  </div>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Toko</th>
+          <th>Status</th>
+          <th class="no-sort">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in sellers %}
+          <tr>
+            <td>{{ u.name|e }}</td>
+            <td>{{ u.email|e }}</td>
+            <td>
+              {{ u.store_name|default('—')|e }}
+              {% if u.booth_number %}<br /><small class="text-secondary">Stan {{ u.booth_number|e }} • {{ u.product_count }} produk</small>
+              {% elseif u.store_name %}<br /><small class="text-secondary">{{ u.product_count }} produk</small>
+              {% endif %}
+            </td>
+            <td>
+              {% if u.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Menunggu</span>
+              {% elseif u.status == 'active' %}
+                <span class="badge bg-success">Aktif</span>
+              {% elseif u.status == 'rejected' %}
+                <span class="badge bg-danger">Ditolak</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ u.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="table-actions">
+                {% if u.status == 'pending' %}
+                  <a class="btn btn-sm btn-success" href="/admin/approve/{{ u.id }}">
+                    <i class="bi bi-check-lg"></i> Setujui
+                  </a><a class="btn btn-sm btn-outline-danger" href="/admin/reject/{{ u.id }}">
+                    <i class="bi bi-x-lg"></i> Tolak
+                  </a>
+                {% endif %}
+                <button
+                  type="button"
+                  class="btn btn-sm btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editModal{{ u.id }}"
+                >
+                  <i class="bi bi-pencil"></i> Ubah
+                </button><a class="btn btn-sm btn-outline-secondary" href="/admin/toggleSeller/{{ u.id }}">
+                  <i class="bi bi-power"></i> Aktif/Nonaktif
+                </a><a
+                  class="btn btn-sm btn-outline-danger"
+                  href="/admin/delSeller/{{ u.id }}"
+                  onclick="return confirm('Hapus penjual {{ u.name|e('js') }} beserta toko & produknya?')"
+                >
+                  <i class="bi bi-trash"></i> Hapus
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="text-secondary">Belum ada penjual terdaftar.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Modal Tambah Penjual #}
+  <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahModalLabel">Tambah Penjual</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="/admin/storeSeller">
+          <div class="modal-body row g-2">
+            <div class="col-12">
+              <label class="form-label">Nama penjual *</label>
+              <input class="form-control" name="name" maxlength="100" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Email *</label>
+              <input class="form-control" type="email" name="email" maxlength="100" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Password *</label>
+              <input class="form-control" type="password" name="password" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Nama toko</label>
+              <input class="form-control" name="store_name" maxlength="100" placeholder="cth: Stan Gorengan A4" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {# Modal Ubah per penjual #}
+  {% for u in sellers %}
+    <div
+      class="modal fade"
+      id="editModal{{ u.id }}"
+      tabindex="-1"
+      aria-labelledby="editModalLabel{{ u.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel{{ u.id }}">Ubah Penjual #{{ u.id }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" action="/admin/updateSeller/{{ u.id }}">
+            <div class="modal-body row g-2">
+              <div class="col-12">
+                <label class="form-label">Nama penjual *</label>
+                <input class="form-control" name="name" maxlength="100" value="{{ u.name|e }}" required />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Email *</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  maxlength="100"
+                  value="{{ u.email|e }}"
+                  required
+                />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Password <small class="text-secondary">(kosongkan jika tidak diganti)</small></label>
+                <input class="form-control" type="password" name="password" />
+              </div>
+              <div class="col-8">
+                <label class="form-label">Nama toko</label>
+                <input
+                  class="form-control"
+                  name="store_name"
+                  maxlength="100"
+                  value="{{ u.store_name|default('')|e }}"
+                />
+              </div>
+              <div class="col-4">
+                <label class="form-label">No. stan</label>
+                <input
+                  class="form-control"
+                  name="booth_number"
+                  maxlength="10"
+                  value="{{ u.booth_number|default('')|e }}"
+                  placeholder="A4"
+                />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Status</label>
+                <select class="form-select" name="status">
+                  {% for s in ['pending', 'active', 'rejected', 'nonactive'] %}
+                    <option value="{{ s }}" {{ u.status == s ? 'selected' : '' }}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

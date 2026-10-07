@@ -1,0 +1,101 @@
+{% extends 'admin/base.twig' %}
+{% block admin_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Pengguna</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="gf-h2 mb-0">Kelola Pengguna</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+      <i class="bi bi-plus-lg"></i> Tambah
+    </button>
+  </div>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Peran</th>
+          <th>Status</th>
+          <th class="no-sort">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+          <tr>
+            <td>{{ u.name|e }}</td>
+            <td>{{ u.email|e }}</td>
+            <td>
+              <span
+                class="badge {% if u.role == 'admin' %}bg-dark{% elseif u.role == 'seller' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}"
+              >
+                {{ u.role }}
+              </span>
+            </td>
+            <td>{{ u.status }}</td>
+            <td>
+              {% if u.role != 'admin' %}
+                <a class="btn btn-sm btn-outline-secondary" href="/admin/toggleUser/{{ u.id }}">
+                  <i class="bi bi-power"></i> Aktif/Nonaktif
+                </a>
+              {% else %}
+                <span class="text-secondary">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Modal Tambah Pengguna #}
+  <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahModalLabel">Tambah Pengguna</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="/admin/storeUser">
+          <div class="modal-body row g-2">
+            <div class="col-12">
+              <label class="form-label">Nama *</label>
+              <input class="form-control" name="name" maxlength="100" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Email *</label>
+              <input class="form-control" type="email" name="email" maxlength="100" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Password *</label>
+              <input class="form-control" type="password" name="password" required />
+            </div>
+            <div class="col-6">
+              <label class="form-label">Peran</label>
+              <select class="form-select" name="role">
+                <option value="buyer">buyer</option>
+                <option value="seller">seller</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status">
+                <option value="active">active</option>
+                <option value="nonactive">nonactive</option>
+                <option value="pending">pending</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

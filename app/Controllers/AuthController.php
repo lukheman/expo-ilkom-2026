@@ -13,7 +13,7 @@ class AuthController extends Controller
             $u = User::where('email', $_POST['email'])->first();
             if ($u && password_verify($_POST['password'], $u->password)) {
                 $_SESSION['user'] = $u->id;
-                header('Location: /');
+                header('Location: '.($u->role === 'admin' ? '/admin' : ($u->role === 'seller' ? '/seller' : '/')));
 
                 return;
             } $error = 'Email atau password salah.';

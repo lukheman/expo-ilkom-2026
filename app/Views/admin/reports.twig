@@ -1,0 +1,46 @@
+{% extends 'admin/base.twig' %}
+{% block admin_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Laporan</li>
+    </ol>
+  </nav>
+  <h1 class="gf-h2">Laporan Penjualan</h1>
+  <p class="text-secondary">Komisi platform {{ rate }}% dari omzet non-batal per stan.</p>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Stan</th>
+            <th>Pesanan</th>
+            <th>Omzet</th>
+            <th>Komisi ({{ rate }}%)</th>
+            <th>Bersih stan</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              <td>{{ r.store.name|e }} <small class="text-secondary">({{ r.store.booth_number|default('—') }})</small></td>
+              <td>{{ r.count }}</td>
+              <td>Rp {{ r.total|number_format(0, ',', '.') }}</td>
+              <td>Rp {{ r.fee|number_format(0, ',', '.') }}</td>
+              <td><strong>Rp {{ r.net|number_format(0, ',', '.') }}</strong></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Total</th>
+            <th></th>
+            <th>Rp {{ gtotal|number_format(0, ',', '.') }}</th>
+            <th>Rp {{ gfee|number_format(0, ',', '.') }}</th>
+            <th>Rp {{ gnet|number_format(0, ',', '.') }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+{% endblock %}

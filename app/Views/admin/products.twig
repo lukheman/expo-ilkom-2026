@@ -1,0 +1,119 @@
+{% extends 'admin/base.twig' %}
+{% block admin_content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Produk</li>
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="gf-h2 mb-0">Moderasi Produk</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+      <i class="bi bi-plus-lg"></i> Tambah
+    </button>
+  </div>
+  <div class="card p-3 datatable-card">
+    <table class="table table-hover align-middle mb-0 datatable w-100">
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th>Stan</th>
+          <th>Harga</th>
+          <th>Stok</th>
+          <th>Status</th>
+          <th class="no-sort">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>{{ p.name|e }}</td>
+            <td>{{ p.store_name|e }}</td>
+            <td>Rp {{ p.price|number_format(0, ',', '.') }}</td>
+            <td>
+              {% if p.stock <= 5 %}
+                <span class="badge bg-danger">{{ p.stock }}</span>
+              {% else %}
+                {{ p.stock }}
+              {% endif %}
+            </td>
+            <td>
+              {% if p.active %}
+                <span class="badge bg-success">Aktif</span>
+              {% else %}
+                <span class="badge bg-secondary">Nonaktif</span>
+              {% endif %}
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-secondary" href="/admin/toggleProduct/{{ p.id }}">
+                <i class="bi bi-power"></i> Aktif/Nonaktif
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-secondary">Belum ada produk.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {# Modal Tambah Produk (admin) #}
+  <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tambahModalLabel">Tambah Produk</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" action="/admin/storeProduct">
+          <div class="modal-body row g-2">
+            <div class="col-md-6">
+              <label class="form-label">Stan *</label>
+              <select class="form-select" name="store_id" required>
+                <option value="">— Pilih stan —</option>
+                {% for s in stores %}
+                  <option value="{{ s.id }}">{{ s.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Kategori</label>
+              <select class="form-select" name="category_id">
+                <option value="">— Tanpa kategori —</option>
+                {% for c in categories %}
+                  <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Nama produk *</label>
+              <input class="form-control" name="name" maxlength="100" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Deskripsi</label>
+              <input class="form-control" name="description" maxlength="500" />
+            </div>
+            <div class="col-6">
+              <label class="form-label">Harga (Rp) *</label>
+              <input class="form-control" type="number" min="0" name="price" required />
+            </div>
+            <div class="col-6">
+              <label class="form-label">Stok *</label>
+              <input class="form-control" type="number" min="0" name="stock" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">URL foto</label>
+              <input class="form-control" name="image" maxlength="255" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
