@@ -1,124 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ title|default('RasaRaya') }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-:root{
-  --primary:#ffc41c; --secondary:#e52535; --bg:#ffffff; --bg2:#ebf3ff;
-  --green-bg:#eaffea; --green:#00880d; --ink:#000000; --muted:#666666;
-  --line:#e8e8e8; --line-soft:#fafafa;
-  --sh-card:rgba(179,190,232,.61) 0 .7px 12px 0;
-  --sh-pop:rgba(0,0,0,.12) 0 2px 8px 0;
-}
-*{box-sizing:border-box}
-body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;font-size:16px}
-a{color:inherit}
-/* ===== header ala GoFood ===== */
-.gf-header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #f0f0f0}
-.gf-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 24px;min-height:72px}
-.gf-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.5px;text-decoration:none;color:#000}
-.gf-logo-mark{width:32px;height:32px;border-radius:50%;background:var(--secondary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
-.gf-nav{display:flex;gap:8px;align-items:center}
-.gf-nav-link{padding:16px 16px;font-weight:600;font-size:16px;color:#000;text-decoration:none;position:relative;white-space:nowrap}
-.gf-nav-link.active::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:4px;background:var(--secondary);border-radius:4px}
-.gf-header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
-.gf-location{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9999px;padding:8px 16px;background:#fff;font-size:14px;color:#000;min-height:44px;max-width:260px}
-.gf-location span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gf-avatar{width:44px;height:44px;border-radius:50%;background:#9d59c0;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none}
-.gf-cart{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:9999px;padding:8px 14px;text-decoration:none;font-weight:600;font-size:14px;background:#fff;min-height:44px}
-.gf-cart-count{background:var(--secondary);color:#fff;border-radius:9999px;font-size:12px;padding:2px 8px;font-weight:700}
-.gf-btn-masuk{border:1px solid var(--line);border-radius:16px;padding:8px 16px;font-weight:600;font-size:14px;text-decoration:none;color:#000;background:#fff;min-height:44px;display:inline-flex;align-items:center}
-.gf-btn-daftar{background:var(--primary);border:1px solid var(--primary);border-radius:12px;padding:8px 16px;font-weight:700;font-size:14px;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
-/* ===== banner merah ===== */
-.gf-banner{background:var(--secondary);position:relative;overflow:hidden}
-.gf-banner::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.35) 2px,transparent 2.2px);background-size:22px 22px;opacity:.5}
-.gf-banner-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px 24px 56px;position:relative}
-.gf-banner-text{color:#fff;font-weight:800;font-size:clamp(32px,6vw,64px);line-height:.95;letter-spacing:-2px;text-shadow:0 2px 0 rgba(0,0,0,.15)}
-.gf-banner-text small{display:block;font-size:clamp(18px,3vw,28px);letter-spacing:0;font-weight:700;margin-top:8px}
-.gf-banner-img{width:min(520px,45vw);height:150px;object-fit:cover;border-radius:16px;box-shadow:var(--sh-pop)}
-/* ===== search overlap ===== */
-.gf-search-float{max-width:1200px;margin:-28px auto 0;padding:0 24px;position:relative;z-index:5}
-.gf-search{background:#fff;border:1px solid var(--line);border-radius:9999px;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 20px;box-shadow:var(--sh-pop);min-height:56px}
-.gf-search input{flex:1;border:0;outline:0;font-size:16px;color:#000}
-.gf-search input::placeholder{color:#999}
-.gf-search-icon{font-size:18px}
-.gf-search-like{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:0;font-size:20px}
-/* ===== content ===== */
-.gf-container{max-width:1200px;margin:0 auto;padding:24px 24px 64px}
-.gf-h2{font-size:24px;font-weight:700;letter-spacing:-.3px;margin:24px 0 16px}
-@media(min-width:640px){.gf-h2{font-size:28px}}
-.gf-filters{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}
-.gf-filters::-webkit-scrollbar{display:none}
-.gf-pill{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:9999px;padding:8px 16px;font-size:14px;font-weight:500;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:6px}
-.gf-pill.active,.gf-pill:hover{border-color:#000}
-.gf-pill-dark{background:#000;color:#fff;border-color:#000}
-/* kategori bulat */
-.gf-cats{display:flex;gap:16px;overflow-x:auto;padding:12px 0 8px;border-bottom:1px solid #f0f0f0;scrollbar-width:none}
-.gf-cats::-webkit-scrollbar{display:none}
-.gf-cat{flex:0 0 88px;text-align:center;text-decoration:none;color:#000}
-.gf-cat-img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#ffe9ec;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;border:2px solid transparent}
-.gf-cat.active .gf-cat-img{border-color:var(--green)}
-.gf-cat-name{font-size:14px;font-weight:500;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gf-cat.active .gf-cat-name{color:#000;font-weight:700}
-.gf-cat.active::after{content:"";display:block;height:3px;background:var(--green);border-radius:3px;margin-top:8px}
-/* grid produk */
-.gf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
-@media(min-width:640px){.gf-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
-@media(min-width:1024px){.gf-grid{grid-template-columns:repeat(4,1fr)}}
-.gf-card{border:1px solid #f0f0f0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--sh-card);display:flex;flex-direction:column}
-.gf-card-imgwrap{position:relative;aspect-ratio:1/1;background:#f6f6f6;overflow:hidden}
-.gf-card-imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
-.gf-badge{position:absolute;top:0;left:0;background:var(--secondary);color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:0 0 12px 0;line-height:1.2}
-.gf-sold{position:absolute;left:0;right:0;bottom:0;padding:20px 12px 8px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
-.gf-card-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px}
-.gf-meta{font-size:13px;color:var(--muted)}
-.gf-meta b{color:var(--green);font-weight:600}
-.gf-title{font-size:16px;font-weight:600;line-height:22px;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
-.gf-store{font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
-.gf-price{font-size:15px;font-weight:700;margin-top:4px}
-.gf-add{margin-top:8px;background:var(--primary);border:1px solid var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#000;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
-.gf-add:hover{background:#e5aa00}
-/* toko */
-.gf-stores{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
-@media(min-width:640px){.gf-stores{grid-template-columns:repeat(3,1fr)}}
-.gf-store-card{border:1px solid #f0f0f0;border-radius:16px;padding:16px;background:#fff;box-shadow:var(--sh-card)}
-/* compat bootstrap pages */
-.card{border:1px solid var(--line-soft);border-radius:16px;box-shadow:var(--sh-card)}
-.btn{min-height:44px;border-radius:12px;font-weight:600}
-.btn-primary{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important}
-.form-control,.form-select{min-height:44px;border-radius:12px}
-.gf-footer{border-top:1px solid #f0f0f0;padding:24px;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:639px){
-  .gf-header-inner{padding:10px 16px;gap:12px;min-height:64px;flex-wrap:wrap}
-  .gf-nav-link{padding:12px 8px;font-size:14px}
-  .gf-location{max-width:170px;padding:6px 12px}
-  .gf-banner-inner{padding:20px 16px 52px}
-  .gf-banner-img{width:42vw;height:110px}
-  .gf-container{padding:16px 16px 48px}
-  .gf-search-float{padding:0 16px}
-}
-</style>
-</head>
-<body>
-<header class="gf-header">
-  <div class="gf-header-inner">
-    <a class="gf-logo" href="/"><span class="gf-logo-mark">🍴</span> RasaRaya</a>
-    <nav class="gf-nav">
-      <a class="gf-nav-link" href="/">Beranda</a>
-      <a class="gf-nav-link active" href="/?filter=hemat">Jajanan Expo</a>
-    </nav>
-    <div class="gf-header-right">
-      <span class="gf-location">📍 <span>Expo • Ambil di stan</span></span>
-      <a class="gf-cart" href="/home/track">🔍 <span class="d-none d-sm-inline">Lacak</span></a>
-      <a class="gf-btn-masuk" href="/auth/login" title="Masuk penjual">Masuk penjual</a>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      {{ title|default('KewirausahaanDigital FTI') }}
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/logo/logo-ladusing.png" />
+    <style>
+      :root{ --primary:#ffc41c; --secondary:#e52535; --bg:#ffffff; --bg2:#ebf3ff; --green-bg:#eaffea; --green:#00880d;
+      --ink:#000000; --muted:#666666; --line:#e8e8e8; --line-soft:#fafafa; --sh-card:rgba(179,190,232,.61) 0 .7px 12px
+      0; --sh-pop:rgba(0,0,0,.12) 0 2px 8px 0; } *{box-sizing:border-box}
+      body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe
+      UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;font-size:16px} a{color:inherit} /* =====
+      header ala GoFood ===== */ .gf-header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid
+      #f0f0f0} .gf-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px
+      24px;min-height:72px}
+      .gf-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.5px;text-decoration:none;color:#000}
+.gf-logo-text{display:flex;flex-direction:column;line-height:1.05}
+.gf-logo-text small{font-size:12px;font-weight:700;letter-spacing:3px;color:#e52535}
+      .gf-logo-mark{width:32px;height:32px;border-radius:50%;background:var(--secondary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+      .gf-nav{display:flex;gap:8px;align-items:center} .gf-nav-link{padding:16px
+      16px;font-weight:600;font-size:16px;color:#000;text-decoration:none;position:relative;white-space:nowrap}
+      .gf-nav-link.active::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:4px;background:var(--secondary);border-radius:4px}
+      .gf-header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+      .gf-location{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9999px;padding:8px
+      16px;background:#fff;font-size:14px;color:#000;min-height:44px;max-width:260px} .gf-location
+      span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .gf-avatar{width:44px;height:44px;border-radius:50%;background:#9d59c0;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none}
+      .gf-cart{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid
+      var(--line);border-radius:9999px;padding:8px
+      14px;text-decoration:none;font-weight:600;font-size:14px;background:#fff;min-height:44px}
+      .gf-cart-count{background:var(--secondary);color:#fff;border-radius:9999px;font-size:12px;padding:2px
+      8px;font-weight:700} .gf-btn-masuk{border:1px solid var(--line);border-radius:16px;padding:8px
+      16px;font-weight:600;font-size:14px;text-decoration:none;color:#000;background:#fff;min-height:44px;display:inline-flex;align-items:center}
+      .gf-btn-daftar{background:var(--primary);border:1px solid var(--primary);border-radius:12px;padding:8px
+      16px;font-weight:700;font-size:14px;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+      /* ===== banner merah ===== */ .gf-banner{background:var(--secondary);position:relative;overflow:hidden}
+      .gf-banner::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.35)
+      2px,transparent 2.2px);background-size:22px 22px;opacity:.5} .gf-banner-inner{max-width:1200px;margin:0
+      auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px 24px
+      56px;position:relative}
+      .gf-banner-text{color:#fff;font-weight:800;font-size:clamp(32px,6vw,64px);line-height:.95;letter-spacing:-2px;text-shadow:0
+      2px 0 rgba(0,0,0,.15)} .gf-banner-text
+      small{display:block;font-size:clamp(18px,3vw,28px);letter-spacing:0;font-weight:700;margin-top:8px}
+      .gf-banner-img{width:min(520px,45vw);height:150px;object-fit:cover;border-radius:16px;box-shadow:var(--sh-pop)} /*
+      ===== search overlap ===== */ .gf-search-float{max-width:1200px;margin:-28px auto 0;padding:0
+      24px;position:relative;z-index:5} .gf-search{background:#fff;border:1px solid
+      var(--line);border-radius:9999px;display:flex;align-items:center;gap:12px;padding:8px 8px 8px
+      20px;box-shadow:var(--sh-pop);min-height:56px} .gf-search
+      input{flex:1;border:0;outline:0;font-size:16px;color:#000} .gf-search input::placeholder{color:#999}
+      .gf-search-icon{font-size:18px}
+      .gf-search-like{width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#fff;border:0;font-size:20px}
+      /* ===== content ===== */ .gf-container{max-width:1200px;margin:0 auto;padding:24px 24px 64px}
+      .gf-h2{font-size:24px;font-weight:700;letter-spacing:-.3px;margin:24px 0 16px}
+      @media(min-width:640px){.gf-h2{font-size:28px}} .gf-filters{display:flex;gap:8px;overflow-x:auto;padding:4px 0
+      12px;scrollbar-width:none} .gf-filters::-webkit-scrollbar{display:none} .gf-pill{flex:0 0 auto;border:1px solid
+      var(--line);background:#fff;border-radius:9999px;padding:8px
+      16px;font-size:14px;font-weight:500;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;gap:6px}
+      .gf-pill.active,.gf-pill:hover{border-color:#000} .gf-pill-dark{background:#000;color:#fff;border-color:#000} /*
+      kategori bulat */ .gf-cats{display:flex;gap:16px;overflow-x:auto;padding:12px 0 8px;border-bottom:1px solid
+      #f0f0f0;scrollbar-width:none} .gf-cats::-webkit-scrollbar{display:none} .gf-cat{flex:0 0
+      88px;text-align:center;text-decoration:none;color:#000}
+      .gf-cat-img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#ffe9ec;margin:0 auto
+      8px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;border:2px solid
+      transparent} .gf-cat.active .gf-cat-img{border-color:var(--green)}
+      .gf-cat-name{font-size:14px;font-weight:500;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .gf-cat.active .gf-cat-name{color:#000;font-weight:700}
+      .gf-cat.active::after{content:"";display:block;height:3px;background:var(--green);border-radius:3px;margin-top:8px}
+      /* grid produk */ .gf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+      @media(min-width:640px){.gf-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
+      @media(min-width:1024px){.gf-grid{grid-template-columns:repeat(4,1fr)}} .gf-card{border:1px solid
+      #f0f0f0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--sh-card);display:flex;flex-direction:column}
+      .gf-card-imgwrap{position:relative;aspect-ratio:1/1;background:#f6f6f6;overflow:hidden} .gf-card-imgwrap
+      img{width:100%;height:100%;object-fit:cover;display:block}
+      .gf-badge{position:absolute;top:0;left:0;background:var(--secondary);color:#fff;font-size:12px;font-weight:800;padding:4px
+      10px;border-radius:0 0 12px 0;line-height:1.2} .gf-sold{position:absolute;left:0;right:0;bottom:0;padding:20px
+      12px
+      8px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+      .gf-card-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px}
+      .gf-meta{font-size:13px;color:var(--muted)} .gf-meta b{color:var(--green);font-weight:600}
+      .gf-title{font-size:16px;font-weight:600;line-height:22px;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+      .gf-store{font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+      .gf-price{font-size:15px;font-weight:700;margin-top:4px}
+      .gf-add{margin-top:8px;background:var(--primary);border:1px solid
+      var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#000;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
+      .gf-add:hover{background:#e5aa00} /* toko */
+      .gf-stores{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
+      @media(min-width:640px){.gf-stores{grid-template-columns:repeat(3,1fr)}} .gf-store-card{border:1px solid
+      #f0f0f0;border-radius:16px;padding:16px;background:#fff;box-shadow:var(--sh-card)} /* compat bootstrap pages */
+      .card{border:1px solid var(--line-soft);border-radius:16px;box-shadow:var(--sh-card)}
+      .btn{min-height:44px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+      .btn-primary{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important}
+      .btn-primary:hover{background:#e5aa00!important;border-color:#e5aa00!important;color:#000!important}
+      .btn-warning{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important}
+      .btn-success{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
+      .btn-danger{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
+      .btn-outline-danger{color:var(--secondary)!important;border-color:var(--secondary)!important}
+      .btn-outline-danger:hover{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
+      .btn-outline-success{color:var(--green)!important;border-color:var(--green)!important}
+      .btn-outline-success:hover{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
+      /* ===== tombol aksi di tabel: ukuran kompak, tema konsisten ===== */
+      .btn-sm{min-height:36px;border-radius:10px;font-size:13px;font-weight:600;padding:6px 12px;gap:6px} .btn-sm
+      .bi{font-size:14px;line-height:1} .table-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+      .table-actions .btn{flex:0 0 auto} /* ===== filter status ala pill GoFood: hitam = aktif ===== */ .filter-bar
+      .btn{border-radius:9999px} .form-control,.form-select{min-height:44px;border-radius:12px}
+      .gf-footer{border-top:1px solid #f0f0f0;padding:24px;text-align:center;color:var(--muted);font-size:13px}
+      @media(max-width:639px){ .gf-header-inner{padding:10px 16px;gap:12px;min-height:64px;flex-wrap:wrap}
+      .gf-nav-link{padding:12px 8px;font-size:14px} .gf-location{max-width:170px;padding:6px 12px}
+      .gf-banner-inner{padding:20px 16px 52px} .gf-banner-img{width:42vw;height:110px} .gf-container{padding:16px 16px
+      48px} .gf-search-float{padding:0 16px} }
+    </style>
+    <style>
+      .panel-top{display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid #f0f0f0;padding:10px
+      24px;position:sticky;top:0;z-index:100;margin-left:260px;transition:margin-left .25s ease}
+      body.panel-closed .panel-top{margin-left:0}
+      @media(max-width:860px){.panel-top{margin-left:0;padding:10px 16px}} /* =====
+      DataTables menyatu dengan tema expo ===== */ .datatable-card{overflow:hidden} .datatable-card
+      .dt-container{padding:4px 2px} .datatable-card
+      .dt-layout-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:0 0
+      12px} .datatable-card .dt-layout-row:last-child{margin:12px 0 0} .datatable-card
+      .dt-search{display:flex;align-items:center;gap:8px} .datatable-card .dt-search
+      label{font-size:13px;color:var(--muted);font-weight:600} .datatable-card .dt-search input{border:1px solid
+      var(--line);border-radius:12px;min-height:44px;padding:8px 14px;font-size:14px;min-width:min(260px,60vw)}
+      .datatable-card .dt-search input:focus{border-color:var(--primary);outline:0;box-shadow:0 0 0 3px
+      rgba(255,196,28,.3)} .datatable-card
+      .dt-length{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)} .datatable-card .dt-length
+      select{border:1px solid var(--line);border-radius:12px;min-height:44px;padding:6px 10px;font-size:14px;color:#000}
+      .datatable-card .dt-info{font-size:13px;color:var(--muted)} .datatable-card .dt-paging nav,.datatable-card
+      .dt-paging .pagination{margin:0} .datatable-card .dt-paging .page-link{border-radius:12px!important;margin:0
+      2px;border:1px solid
+      var(--line);color:#000;font-size:14px;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+      .datatable-card .dt-paging .page-item.active
+      .page-link{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important;font-weight:700}
+      .datatable-card table.datatable{margin:0!important;width:100%!important} .datatable-card table.datatable thead
+      th{white-space:nowrap;cursor:pointer} .datatable-card table.datatable thead th.no-sort{cursor:default}
+      .datatable-card .dt-empty{color:var(--muted)} .datatable-card .dt-scroll{border-radius:12px}
+      /* ===== breadcrumb pill modern tema expo (global admin/seller) ===== */ .breadcrumb{background:#fffdf4;border:1px
+      solid #f0f0f0;border-radius:9999px;padding:8px 18px;margin-bottom:18px;box-shadow:var(--sh-card);font-size:14px;align-items:center}
+      .breadcrumb-item{font-weight:600;display:inline-flex;align-items:center} .breadcrumb-item a{color:#000;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+      .breadcrumb-item a:hover{color:#b42c3f;text-decoration:underline} .breadcrumb-item+.breadcrumb-item::before{content:"›";color:#999;font-weight:800}
+      .breadcrumb-item.active{color:#000!important;background:var(--primary);border-radius:9999px;padding:2px 12px;font-weight:700}
+      @media(max-width:639px){ .breadcrumb{font-size:13px;padding:6px 14px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap} }
+      @media(max-width:639px){ .datatable-card{padding:12px!important} .datatable-card .dt-search{width:100%}
+      .datatable-card .dt-search input{flex:1} }
+    </style>
+  </head>
+  <body>
+    {% if chrome == 'admin' or chrome == 'seller' %}
+      <nav class="panel-top">
+        <button class="btn btn-sm btn-outline-secondary panel-burger" id="panelBurger" type="button">
+          <i class="bi bi-list"></i>
+        </button>
+        <strong>{{ panel|default('Panel') }}</strong>
+        <span class="ms-auto"></span>
+        <a href="/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-globe"></i> Lihat situs</a>
+      </nav>
+    {% else %}
+      <header class="gf-header">
+        <div class="gf-header-inner">
+          <a class="gf-logo" href="/"><span class="gf-logo-mark"><i class="bi bi-shop"></i></span> <span class="gf-logo-text">KewirausahaanDigital<small>FTI</small></span></a>
+          <nav class="gf-nav">
+            <a class="gf-nav-link" href="/">Beranda</a>
+            <a class="gf-nav-link active" href="/?filter=hemat">Jajanan Expo</a>
+          </nav>
+          <div class="gf-header-right">
+            <span class="gf-location"><i class="bi bi-geo-alt-fill"></i> <span>Expo • Ambil di stan</span></span>
+            <a class="gf-cart" href="/home/track">
+              <i class="bi bi-search"></i> <span class="d-none d-sm-inline">Lacak</span>
+            </a>
+            <a class="gf-btn-masuk" href="/auth/login" title="Masuk penjual">Masuk penjual</a>
+          </div>
+        </div>
+      </header>
+    {% endif %}
+    {% block content %}
+
+    {% endblock %}
+    <div class="gf-footer">
+      KewirausahaanDigital FTI • Ambil di stan • Bayar QRIS/tunai • <a href="/auth/login">Penjual</a> • <a href="/admin">Admin</a>
     </div>
-  </div>
-</header>
-{% block content %}{% endblock %}
-<div class="gf-footer">RasaRaya HEMAT • Marketplace makanan multi-vendor • Harga Rp • Mobile-first</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js"></script>
+    <script>
+      (function(){ var b=document.getElementById('panelBurger'), s=document.getElementById('panelScrim');
+      if(b){b.addEventListener('click',function(){if(window.matchMedia('(max-width:860px)').matches){document.body.classList.toggle('panel-open');}else{document.body.classList.toggle('panel-closed');}});}
+      if(s){s.addEventListener('click',function(){document.body.classList.remove('panel-open');});} })();
+      document.addEventListener('DOMContentLoaded', function(){ if(typeof DataTable === 'undefined') return; var lang =
+      { search: 'Cari:', searchPlaceholder: 'Ketik untuk mencari…', lengthMenu: 'Tampil _MENU_ data', info: 'Menampilkan
+      _START_–_END_ dari _TOTAL_ data', infoEmpty: 'Tidak ada data', infoFiltered: '(disaring dari _MAX_ total data)',
+      emptyTable: 'Belum ada data.', zeroRecords: 'Data tidak ditemukan.', paginate: { first: 'Awal', last: 'Akhir',
+      next: '›', previous: '‹' } }; document.querySelectorAll('table.datatable').forEach(function(el){
+      if(el.dataset.dtInit) return; el.dataset.dtInit = '1'; var noSort = []; el.querySelectorAll('thead
+      th').forEach(function(th, i){ if(th.classList.contains('no-sort')) noSort.push(i); }); try{ new DataTable(el, {
+      responsive: true, scrollX: false, autoWidth: false, pageLength: 10, lengthMenu: [5, 10, 25, 50, 100], ordering:
+      true, searching: true, paging: el.dataset.paging !== 'off', order: [], columnDefs: noSort.length ? [{ orderable:
+      false, targets: noSort }] : [], language: lang, layout: { topStart: 'pageLength', topEnd: 'search', bottomStart:
+      'info', bottomEnd: 'paging' } }); }catch(e){ /* biarkan tabel HTML biasa bila gagal */ } }); });
+    </script>
+    {% block scripts %}
+
+    {% endblock %}
+  </body>
 </html>
