@@ -10,6 +10,8 @@ use App\Models\Store;
 use App\Models\User;
 use Core\Database;
 
+User::firstOrCreate(['email' => 'admin@rasa.test'], ['name' => 'Admin Expo', 'password' => password_hash('admin123', PASSWORD_DEFAULT), 'role' => 'admin', 'status' => 'active']);
+
 $cat = [];
 foreach (['Makanan Berat', 'Camilan', 'Minuman'] as $n) {
     $cat[$n] = Category::firstOrCreate(['name' => $n], ['slug' => strtolower(str_replace(' ', '-', $n))]);

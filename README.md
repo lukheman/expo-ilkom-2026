@@ -1,4 +1,4 @@
-# RasaRaya — Marketplace Makanan Multi-Vendor (MVP)
+# KewirausahaanDigitalFTI — Marketplace Makanan Multi-Vendor (MVP)
 
 Marketplace makanan Bahasa Indonesia berbasis PHP MVC, Twig, Bootstrap, dan Eloquent. MVP mencakup katalog, pencarian/filter, autentikasi, keranjang, checkout, dan dashboard penjual.
 
@@ -23,6 +23,7 @@ Marketplace makanan Bahasa Indonesia berbasis PHP MVC, Twig, Bootstrap, dan Eloq
 6. Buka `http://localhost:8000`.
 
 Akun seed penjual: `demo1@rasa.test`, `demo2@rasa.test`, `demo3@rasa.test`. Password: `password`. Dashboard penjual: `/seller`.
+Akun seed admin: `admin@rasa.test` / `admin123`. Dashboard admin: `/admin` (persetujuan penjual, pengguna, kategori, produk, pesanan).
 
 Checkout expo tanpa login: pembeli tekan Beli pada satu menu, isi nama + WA, langsung dapat satu kode ambil, bayar QRIS atau tunai di stan (tanpa payment gateway — verifikasi manual oleh penjual). Lihat `EXPO.md` untuk skema lengkap. Upload foto memakai URL gambar; storage dan validasi upload dapat ditambahkan pada tahap berikutnya.
 
@@ -155,6 +156,12 @@ class _002_create_posts
     }
 }
 ```
+
+## ✨ Format kode
+
+- PHP: Laravel Pint (`pint.json`) — `composer format` / `composer format:test`
+- Twig: Twig CS Fixer (`.twig-cs-fixer.php`) — `composer format:twig` / `composer format:twig:test`
+- HTML di dalam Twig: Prettier + `@zackad/prettier-plugin-twig` (`.prettierrc.json`, butuh `npm install`) — `npm run format:twig` / `npm run format:twig:check`
 
 ## 📜 Lisensi
 NORION adalah perangkat lunak open-source di bawah lisensi MIT.

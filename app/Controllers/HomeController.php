@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
 use Core\Controller;
@@ -102,7 +104,7 @@ class HomeController extends Controller
             $db_error = 'Database belum siap. Jalankan migrasi.';
         }
         $this->view('home/index', [
-            'title' => 'RasaRaya Expo',
+            'title' => 'KewirausahaanDigital FTI',
             'products' => $products, 'stores' => $stores, 'categories' => $categories,
             'cat_images' => $catImages ?? [],
             'q' => $q, 'cat' => $cat, 'filter' => $filter,
@@ -163,9 +165,9 @@ class HomeController extends Controller
             if (! $error) {
                 $sid = $store->id;
                 $booth = $store->booth_number ?: 'S'.$sid;
-                $today = \App\Models\Order::where('store_id', $sid)->whereDate('created_at', date('Y-m-d'))->count() + 1;
+                $today = Order::where('store_id', $sid)->whereDate('created_at', date('Y-m-d'))->count() + 1;
                 $pickup = $booth.'-'.str_pad($today, 3, '0', STR_PAD_LEFT);
-                $order = \App\Models\Order::create([
+                $order = Order::create([
                     'user_id' => $_SESSION['user'] ?? null,
                     'store_id' => $sid,
                     'group_code' => $pickup,
@@ -180,7 +182,7 @@ class HomeController extends Controller
                     'status' => 'Menunggu',
                     'note' => $note !== '' ? $note : null,
                 ]);
-                \App\Models\OrderItem::create([
+                OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->id,
                     'quantity' => $item->qty,
@@ -205,7 +207,7 @@ class HomeController extends Controller
     {
         $orders = [];
         if ($group) {
-            $orders = \App\Models\Order::where('group_code', $group)->orderBy('id')->get();
+            $orders = Order::where('group_code', $group)->orderBy('id')->get();
             $storeIds = [];
             foreach ($orders as $o) {
                 $storeIds[] = $o->store_id;
@@ -230,7 +232,7 @@ class HomeController extends Controller
         $orders = [];
         $searched = $code !== '';
         if ($searched) {
-            $orders = \App\Models\Order::where('group_code', $code)->orWhere('pickup_code', $code)->orderBy('id')->get();
+            $orders = Order::where('group_code', $code)->orWhere('pickup_code', $code)->orderBy('id')->get();
             $storeIds = [];
             foreach ($orders as $o) {
                 $storeIds[] = $o->store_id;

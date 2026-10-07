@@ -1,37 +1,92 @@
-{% extends "layout.twig" %}{% block content %}<div class="gf-container" style="max-width:760px">
-<h1 class="gf-h2">Checkout — Ambil di Stan</h1>
-<div class="alert alert-success">Tanpa daftar / tanpa login. Langsung beli, ambil di stan, bayar QRIS atau tunai.</div>
-{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-{% if items|length == 0 %}
-  <div class="text-center py-5"><div style="font-size:4rem">🍜</div><h3>Belum ada item dibeli</h3><p class="text-secondary">Pilih menu lalu tekan <strong>Beli</strong>.</p><a href="/" class="btn btn-primary">Pilih makanan</a></div>
-{% else %}
-  <div class="card p-3 mb-3">
-    <div class="d-flex justify-content-between align-items-center">
-      <strong>🏪 {{ store ? store.name : 'Stan' }}</strong>
-      <span class="badge bg-secondary">Stan {{ store and store.booth_number ? store.booth_number : '—' }}</span>
+{% extends 'layout.twig' %}
+{% block content %}
+  <div class="gf-container" style="max-width:760px">
+    <h1 class="gf-h2">Checkout — Ambil di Stan</h1>
+    <div class="alert alert-success">
+      Tanpa daftar / tanpa login. Langsung beli, ambil di stan, bayar QRIS atau tunai.
     </div>
-    {% for p in items %}
-    <div class="d-flex justify-content-between py-2 border-bottom">
-      <span>{{ p.qty }}× {{ p.name }} <small class="text-secondary">({{ p.size_opt }} • {{ p.ice_opt }})</small></span>
-      <strong>Rp {{ p.subtotal|number_format(0,',','.') }}</strong>
-    </div>
-    {% endfor %}
+    {% if error %}
+      <div class="alert alert-danger">
+        {{ error }}
+      </div>
+    {% endif %}
+    {% if (items|length) == 0 %}
+      <div class="text-center py-5">
+        <div style="font-size:4rem">
+          <i class="bi bi-basket"></i>
+        </div>
+        <h3>Belum ada item dibeli</h3>
+        <p class="text-secondary">
+          Pilih menu lalu tekan <strong>Beli</strong>.
+        </p><a href="/" class="btn btn-primary">Pilih makanan</a>
+      </div>
+    {% else %}
+      <div class="card p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong><i class="bi bi-shop"></i> {{ store ? store.name : 'Stan' }}</strong>
+          <span class="badge bg-secondary">Stan {{ store and store.booth_number ? store.booth_number : '—' }}</span>
+        </div>
+        {% for p in items %}
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span>
+              {{ p.qty }}× {{ p.name }} <small class="text-secondary">({{ p.size_opt }} • {{ p.ice_opt }})</small>
+            </span>
+            <strong>Rp {{ p.subtotal|number_format(0, ',', '.') }}</strong>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="card p-4">
+        <form method="post">
+          <input type="hidden" name="step" value="confirm" />
+          <label class="form-label">Nama pemesan *</label>
+          <input
+            class="form-control mb-3"
+            name="name"
+            maxlength="100"
+            required
+            value="{{ old.name|e }}"
+            placeholder="Nama yang dipanggil di stan"
+          />
+          <label class="form-label">No. WA (opsional)</label>
+          <input
+            class="form-control mb-3"
+            name="phone"
+            value="{{ old.phone|e }}"
+            placeholder="081234567890 — untuk dihubungi penjual"
+          />
+          <label class="form-label">Pembayaran *</label>
+          <div class="form-check mb-2">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="payment"
+              value="QRIS"
+              id="payQ"
+              {{ old.payment != 'Tunai di stan' ? 'checked' : '' }}
+            /><label class="form-check-label" for="payQ">
+              <strong>QRIS</strong> — scan QR di stan, penjual verifikasi
+            </label>
+          </div>
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="payment"
+              value="Tunai di stan"
+              id="payT"
+              {{ old.payment == 'Tunai di stan' ? 'checked' : '' }}
+            /><label class="form-check-label" for="payT"><strong>Tunai di stan</strong> — bayar saat ambil</label>
+          </div>
+          <label class="form-label">Catatan (opsional)</label>
+          <textarea class="form-control mb-3" name="note" placeholder="Contoh: es sedikit, sambal pisah">
+            {{ old.note|e }}
+          </textarea>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span>Total bayar</span><h2 class="price mb-0">Rp {{ total|number_format(0, ',', '.') }}</h2>
+          </div>
+          <button class="btn btn-primary w-100">Buat Pesanan — Ambil di Stan</button>
+        </form>
+      </div>
+    {% endif %}
   </div>
-  <div class="card p-4">
-    <form method="post">
-      <input type="hidden" name="step" value="confirm">
-      <label class="form-label">Nama pemesan *</label>
-      <input class="form-control mb-3" name="name" maxlength="100" required value="{{ old.name|e }}" placeholder="Nama yang dipanggil di stan">
-      <label class="form-label">No. WA (opsional)</label>
-      <input class="form-control mb-3" name="phone" value="{{ old.phone|e }}" placeholder="081234567890 — untuk dihubungi penjual">
-      <label class="form-label">Pembayaran *</label>
-      <div class="form-check mb-2"><input class="form-check-input" type="radio" name="payment" value="QRIS" id="payQ" {% if old.payment != 'Tunai di stan' %}checked{% endif %}><label class="form-check-label" for="payQ"><strong>QRIS</strong> — scan QR di stan, penjual verifikasi</label></div>
-      <div class="form-check mb-3"><input class="form-check-input" type="radio" name="payment" value="Tunai di stan" id="payT" {% if old.payment == 'Tunai di stan' %}checked{% endif %}><label class="form-check-label" for="payT"><strong>Tunai di stan</strong> — bayar saat ambil</label></div>
-      <label class="form-label">Catatan (opsional)</label>
-      <textarea class="form-control mb-3" name="note" placeholder="Contoh: es sedikit, sambal pisah">{{ old.note|e }}</textarea>
-      <div class="d-flex justify-content-between align-items-center mb-3"><span>Total bayar</span><h2 class="price mb-0">Rp {{ total|number_format(0,',','.') }}</h2></div>
-      <button class="btn btn-primary w-100">Buat Pesanan — Ambil di Stan</button>
-    </form>
-  </div>
-{% endif %}
-</div>{% endblock %}
+{% endblock %}

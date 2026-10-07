@@ -1,4 +1,4 @@
-# Skema Expo — RasaRaya
+# Skema Expo — KewirausahaanDigitalFTI
 
 Aplikasi ini dipakai di **acara expo offline** dengan banyak penjual makanan.
 Semua keputusan pembelian dan pembayaran di bawah disesuaikan dengan kondisi lapangan.
