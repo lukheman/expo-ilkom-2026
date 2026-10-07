@@ -6,55 +6,30 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
 use Core\Controller;
-use Illuminate\Database\Capsule\Manager;
 
 class HomeController extends Controller
 {
-    private function cartCount()
+    // Expo: tanpa keranjang. Satu aksi beli = satu item langsung ke checkout.
+    private function buyItem()
     {
-        $c = 0;
-        foreach ($_SESSION['cart'] ?? [] as $v) {
-            $c += is_array($v) ? ($v['qty'] ?? 0) : $v;
+        $b = $_SESSION['buy'] ?? null;
+        if (! $b) {
+            return [null, null, 0];
         }
+        $p = Product::find($b['id'] ?? 0);
+        if (! $p || ! $p->active) {
+            unset($_SESSION['buy']);
 
-        return $c;
-    }
-
-    private function cartDetailed()
-    {
-        $cart = [];
-        $total = 0;
-        foreach ($_SESSION['cart'] ?? [] as $key => $v) {
-            if (is_array($v)) {
-                $id = $v['id'];
-                $qty = $v['qty'];
-                $unit = $v['unit_price'];
-                $size = $v['size'] ?? 'Reguler';
-                $ice = $v['ice'] ?? 'Es Normal';
-            } else {
-                $id = $key;
-                $qty = $v;
-                $size = 'Reguler';
-                $ice = 'Es Normal';
-                $unit = null;
-            }
-            $p = Product::find($id);
-            if (! $p) {
-                continue;
-            }
-            if ($unit === null) {
-                $unit = (float) $p->price;
-            }
-            $p->qty = $qty;
-            $p->unit_price = $unit;
-            $p->size_opt = $size;
-            $p->ice_opt = $ice;
-            $p->subtotal = $unit * $qty;
-            $total += $p->subtotal;
-            $cart[] = $p;
+            return [null, null, 0];
         }
+        $p->qty = $b['qty'];
+        $p->unit_price = $b['unit_price'];
+        $p->size_opt = $b['size'];
+        $p->ice_opt = $b['ice'];
+        $p->subtotal = $b['unit_price'] * $b['qty'];
+        $store = Store::find($p->store_id);
 
-        return [$cart, $total];
+        return [$p, $store, $p->subtotal];
     }
 
     public function index()
@@ -127,80 +102,150 @@ class HomeController extends Controller
             $db_error = 'Database belum siap. Jalankan migrasi.';
         }
         $this->view('home/index', [
-            'title' => 'RasaRaya HEMAT',
+            'title' => 'RasaRaya Expo',
             'products' => $products, 'stores' => $stores, 'categories' => $categories,
             'cat_images' => $catImages ?? [],
             'q' => $q, 'cat' => $cat, 'filter' => $filter,
+            'habis' => isset($_GET['habis']),
             'db_error' => $db_error ?? null,
-            'cart_count' => $this->cartCount(),
         ]);
-    }
-
-    public function add($id = null)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $pid = (int) ($_POST['product_id'] ?? $id ?? 0);
-            $size = $_POST['size'] ?? 'Reguler';
-            $ice = $_POST['ice'] ?? 'Es Normal';
-            $qty = max(1, min(10, (int) ($_POST['qty'] ?? 1)));
-            $p = Product::find($pid);
-            if (! $p) {
-                header('Location: /');
-
-                return;
-            }
-            $extra = ($size === 'Besar') ? 5000 : 0;
-            $unit = (float) $p->price + $extra;
-            $key = $pid.'_'.$size.'_'.$ice;
-            if (! isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
-            if (isset($_SESSION['cart'][$key]) && is_array($_SESSION['cart'][$key])) {
-                $_SESSION['cart'][$key]['qty'] += $qty;
-            } elseif (isset($_SESSION['cart'][$pid]) && ! is_array($_SESSION['cart'][$pid])) {
-                $_SESSION['cart'][$key] = ['id' => $pid, 'qty' => $qty, 'unit_price' => $unit, 'size' => $size, 'ice' => $ice];
-            } else {
-                $_SESSION['cart'][$key] = ['id' => $pid, 'qty' => $qty, 'unit_price' => $unit, 'size' => $size, 'ice' => $ice];
-            }
-            header('Location: /home/cart');
-
-            return;
-        }
-        $id = (int) $id;
-        if ($id) {
-            $p = Product::find($id);
-            if ($p) {
-                $key = $id.'_Reguler_Es Normal';
-                if (! isset($_SESSION['cart'])) {
-                    $_SESSION['cart'] = [];
-                }
-                if (isset($_SESSION['cart'][$key]) && is_array($_SESSION['cart'][$key])) {
-                    $_SESSION['cart'][$key]['qty'] += 1;
-                } else {
-                    $_SESSION['cart'][$key] = ['id' => $id, 'qty' => 1, 'unit_price' => (float) $p->price, 'size' => 'Reguler', 'ice' => 'Es Normal'];
-                }
-            }
-        }
-        header('Location: /?added=1');
-    }
-
-    public function cart()
-    {
-        [$cart,$total] = $this->cartDetailed();
-        $this->view('home/cart', ['title' => 'Keranjang', 'cart' => $cart, 'total' => $total, 'cart_count' => $this->cartCount()]);
     }
 
     public function checkout()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            [$cart,$total] = $this->cartDetailed();
-            if ($total) {
-                Manager::table('orders')->insert(['customer_name' => $_POST['name'], 'address' => $_POST['address'], 'payment_method' => $_POST['payment'], 'total' => $total, 'note' => $_POST['note'] ?? '', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
-                $_SESSION['cart'] = [];
-                header('Location: /?success=1');
+        $error = null;
+        // Langkah 1: dari tombol "Beli Langsung" di katalog.
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id']) && ($_POST['step'] ?? '') !== 'confirm') {
+            $pid = (int) $_POST['product_id'];
+            $size = in_array($_POST['size'] ?? '', ['Reguler', 'Besar'], true) ? $_POST['size'] : 'Reguler';
+            $ice = in_array($_POST['ice'] ?? '', ['Sedikit Es', 'Es Normal'], true) ? $_POST['ice'] : 'Es Normal';
+            $qty = max(1, min(10, (int) ($_POST['qty'] ?? 1)));
+            $p = Product::find($pid);
+            if (! $p || ! $p->active || $qty > $p->stock) {
+                header('Location: /?habis=1');
 
                 return;
             }
-        } $this->view('home/checkout', ['title' => 'Checkout', 'total' => $_GET['total'] ?? 0, 'cart_count' => $this->cartCount()]);
+            $_SESSION['buy'] = [
+                'id' => $pid,
+                'qty' => $qty,
+                'unit_price' => (float) $p->price + ($size === 'Besar' ? 5000 : 0),
+                'size' => $size,
+                'ice' => $ice,
+            ];
+            header('Location: /home/checkout');
+
+            return;
+        }
+        // Langkah 2: konfirmasi pesanan oleh pembeli (tanpa login).
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === 'confirm') {
+            [$item,$store,$total] = $this->buyItem();
+            $name = trim($_POST['name'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $payment = $_POST['payment'] ?? '';
+            $note = trim($_POST['note'] ?? '');
+            if (! $item || ! $store) {
+                $error = 'Item pembelian tidak valid. Pilih menu lagi.';
+            } elseif ($name === '' || mb_strlen($name) > 100) {
+                $error = 'Nama pemesan wajib diisi (maks 100 karakter).';
+            } elseif ($phone !== '' && ! preg_match('/^[+0-9][0-9 \-]{7,17}$/', $phone)) {
+                $error = 'Nomor WA tidak valid. Contoh: 081234567890.';
+            } elseif (! in_array($payment, ['QRIS', 'Tunai di stan'], true)) {
+                $error = 'Pilih metode pembayaran: QRIS atau Tunai di stan.';
+            } else {
+                $fresh = Product::find($item->id);
+                if (! $fresh || ! $fresh->active || $item->qty > $fresh->stock) {
+                    $error = 'Stok "'.$item->name.'" tidak cukup. Sisa: '.($fresh ? $fresh->stock : 0).'.';
+                    unset($_SESSION['buy']);
+                    [$item,$store,$total] = [null, null, 0];
+                }
+            }
+            if (! $error) {
+                $sid = $store->id;
+                $booth = $store->booth_number ?: 'S'.$sid;
+                $today = \App\Models\Order::where('store_id', $sid)->whereDate('created_at', date('Y-m-d'))->count() + 1;
+                $pickup = $booth.'-'.str_pad($today, 3, '0', STR_PAD_LEFT);
+                $order = \App\Models\Order::create([
+                    'user_id' => $_SESSION['user'] ?? null,
+                    'store_id' => $sid,
+                    'group_code' => $pickup,
+                    'pickup_code' => $pickup,
+                    'customer_name' => $name,
+                    'buyer_phone' => $phone !== '' ? $phone : null,
+                    'address' => 'Ambil di stan',
+                    'fulfillment' => 'pickup',
+                    'payment_method' => $payment,
+                    'payment_status' => 'Belum bayar',
+                    'total' => $total,
+                    'status' => 'Menunggu',
+                    'note' => $note !== '' ? $note : null,
+                ]);
+                \App\Models\OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->id,
+                    'quantity' => $item->qty,
+                    'price' => $item->unit_price,
+                    'variant' => $item->size_opt.' • '.$item->ice_opt,
+                ]);
+                Product::where('id', $item->id)->decrement('stock', $item->qty);
+                unset($_SESSION['buy']);
+                header('Location: /home/success/'.$pickup);
+
+                return;
+            }
+            $this->view('home/checkout', ['title' => 'Checkout Expo', 'store' => $store, 'items' => $item ? [$item] : [], 'total' => $total, 'error' => $error, 'old' => ['name' => $name ?? '', 'phone' => $phone ?? '', 'payment' => $payment ?? 'QRIS', 'note' => $note ?? '']]);
+
+            return;
+        }
+        [$item,$store,$total] = $this->buyItem();
+        $this->view('home/checkout', ['title' => 'Checkout Expo', 'store' => $store, 'items' => $item ? [$item] : [], 'total' => $total, 'error' => $error, 'old' => ['name' => '', 'phone' => '', 'payment' => 'QRIS', 'note' => '']]);
+    }
+
+    public function success($group = null)
+    {
+        $orders = [];
+        if ($group) {
+            $orders = \App\Models\Order::where('group_code', $group)->orderBy('id')->get();
+            $storeIds = [];
+            foreach ($orders as $o) {
+                $storeIds[] = $o->store_id;
+            }
+            $storeMap = [];
+            if ($storeIds) {
+                foreach (Store::whereIn('id', array_unique($storeIds))->get() as $s) {
+                    $storeMap[$s->id] = $s;
+                }
+            }
+            foreach ($orders as $o) {
+                $o->store_name = $storeMap[$o->store_id]->name ?? 'Stan '.$o->store_id;
+                $o->booth = ($storeMap[$o->store_id]->booth_number ?? null) ?: 'S'.$o->store_id;
+            }
+        }
+        $this->view('home/success', ['title' => 'Pesanan Berhasil', 'group' => $group, 'orders' => $orders]);
+    }
+
+    public function track()
+    {
+        $code = trim($_GET['kode'] ?? '');
+        $orders = [];
+        $searched = $code !== '';
+        if ($searched) {
+            $orders = \App\Models\Order::where('group_code', $code)->orWhere('pickup_code', $code)->orderBy('id')->get();
+            $storeIds = [];
+            foreach ($orders as $o) {
+                $storeIds[] = $o->store_id;
+            }
+            $storeMap = [];
+            if ($storeIds) {
+                foreach (Store::whereIn('id', array_unique($storeIds))->get() as $s) {
+                    $storeMap[$s->id] = $s;
+                }
+            }
+            foreach ($orders as $o) {
+                $o->store_name = $storeMap[$o->store_id]->name ?? 'Stan '.$o->store_id;
+                $o->booth = ($storeMap[$o->store_id]->booth_number ?? null) ?: 'S'.$o->store_id;
+            }
+        }
+        $this->view('home/track', ['title' => 'Lacak Pesanan', 'kode' => $code, 'searched' => $searched, 'orders' => $orders]);
     }
 }

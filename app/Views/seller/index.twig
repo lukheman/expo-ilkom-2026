@@ -1,1 +1,31 @@
-{% extends "layout.twig" %}{% block content %}<div class="d-flex justify-content-between"><div><h1 class="fw-bold">Dashboard Penjual</h1><p class="text-secondary">Kelola menu dan toko kamu.</p></div><a href="/auth/logout" class="btn btn-outline-secondary">Keluar</a></div><div class="row g-3 mb-4"><div class="col-md-4"><div class="card p-4"><small>Total penjualan</small><h2 class="price">Rp 0</h2></div></div><div class="col-md-4"><div class="card p-4"><small>Pesanan</small><h2>0</h2></div></div><div class="col-md-4"><div class="card p-4"><small>Produk aktif</small><h2>{{ products|length }}</h2></div></div></div><div class="card p-4"><h4>Tambah produk</h4><form method="post" action="/seller/save" class="row g-2"><input class="form-control" name="store" placeholder="Nama toko" required><input class="form-control" name="name" placeholder="Nama produk" required><input class="form-control" name="description" placeholder="Deskripsi"><input class="form-control" name="price" type="number" placeholder="Harga" required><input class="form-control" name="stock" type="number" placeholder="Stok" required><input class="form-control" name="image" placeholder="URL foto"><select class="form-select" name="category">{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select><button class="btn btn-primary">Simpan produk</button></form></div><h4 class="mt-4">Produk kamu</h4><div class="list-group">{% for p in products %}<div class="list-group-item d-flex justify-content-between"><span>{{ p.name }} · Rp {{ p.price|number_format(0,',','.') }}</span><a class="text-danger" href="/seller/delete/{{ p.id }}">Hapus</a></div>{% endfor %}</div>{% endblock %}
+{% extends "layout.twig" %}{% block content %}<div class="gf-container">
+<div class="d-flex justify-content-between align-items-center"><div><h1 class="fw-bold">Dashboard Penjual</h1><p class="text-secondary">Kelola menu, stan, dan pesanan expo. {% if store and store.booth_number %}Stan <strong>{{ store.booth_number }}</strong>.{% endif %}</p></div><a href="/auth/logout" class="btn btn-outline-secondary">Keluar</a></div>
+
+<h4 class="mt-4" id="pesanan">📦 Pesanan masuk (ambil di stan)</h4>
+{% if orders|length == 0 %}
+<p class="text-secondary">Belum ada pesanan. Bagikan QR/link katalog ke pengunjung expo.</p>
+{% else %}
+<div class="table-responsive"><table class="table table-sm align-middle">
+<tr><th>Kode</th><th>Pemesan</th><th>Total</th><th>Bayar</th><th>Status</th><th>Aksi</th></tr>
+{% for o in orders %}
+<tr>
+<td><strong>{{ o.pickup_code }}</strong><br><small class="text-secondary">{{ o.group_code }}</small></td>
+<td>{{ o.customer_name|e }}{% if o.buyer_phone %}<br><small>{{ o.buyer_phone|e }}</small>{% endif %}{% if o.note %}<br><small class="text-secondary">“{{ o.note|e }}”</small>{% endif %}</td>
+<td>Rp {{ o.total|number_format(0,',','.') }}<br><small>{{ o.payment_method }}</small></td>
+<td>{% if o.payment_status == 'Lunas' %}<span class="badge bg-success">Lunas</span>{% else %}<span class="badge bg-warning text-dark">Belum bayar</span><br><a href="/seller/paid/{{ o.id }}" class="btn btn-sm btn-outline-success mt-1">Tandai lunas</a>{% endif %}</td>
+<td><span class="badge bg-secondary">{{ o.status }}</span></td>
+<td><div class="btn-group btn-group-sm" role="group">
+<a class="btn btn-outline-secondary" href="/seller/status/{{ o.id }}/Diproses">Proses</a>
+<a class="btn btn-outline-secondary" href="/seller/status/{{ o.id }}/Siap%20Diambil">Siap diambil</a>
+<a class="btn btn-outline-secondary" href="/seller/status/{{ o.id }}/Selesai">Selesai</a>
+<a class="btn btn-outline-danger" href="/seller/status/{{ o.id }}/Dibatalkan">Batal</a>
+</div></td>
+</tr>
+{% endfor %}
+</table></div>
+{% endif %}
+
+<div class="row g-3 mb-4 mt-2"><div class="col-md-4"><div class="card p-4"><small>Total penjualan</small><h2 class="price">Rp 0</h2></div></div><div class="col-md-4"><div class="card p-4"><small>Pesanan</small><h2>{{ orders|length }}</h2></div></div><div class="col-md-4"><div class="card p-4"><small>Produk aktif</small><h2>{{ products|length }}</h2></div></div></div>
+<div class="card p-4"><h4>Tambah produk</h4><form method="post" action="/seller/save" class="row g-2"><input class="form-control" name="store" placeholder="Nama toko" required><input class="form-control" name="booth" placeholder="Nomor stan (contoh: A4)" maxlength="10"><input class="form-control" name="name" placeholder="Nama produk" required><input class="form-control" name="description" placeholder="Deskripsi"><input class="form-control" name="price" type="number" placeholder="Harga" required><input class="form-control" name="stock" type="number" placeholder="Stok" required><input class="form-control" name="image" placeholder="URL foto"><select class="form-select" name="category">{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select><button class="btn btn-primary">Simpan produk</button></form></div>
+<h4 class="mt-4">Produk kamu</h4><div class="list-group">{% for p in products %}<div class="list-group-item d-flex justify-content-between"><span>{{ p.name }} · Rp {{ p.price|number_format(0,',','.') }} · stok {{ p.stock }}</span><a class="text-danger" href="/seller/delete/{{ p.id }}">Hapus</a></div>{% endfor %}</div>
+</div>{% endblock %}

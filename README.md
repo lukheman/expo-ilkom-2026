@@ -24,7 +24,7 @@ Marketplace makanan Bahasa Indonesia berbasis PHP MVC, Twig, Bootstrap, dan Eloq
 
 Akun seed penjual: `demo1@rasa.test`, `demo2@rasa.test`, `demo3@rasa.test`. Password: `password`. Dashboard penjual: `/seller`.
 
-Checkout MVP menyimpan pesanan ke database, tanpa integrasi payment gateway. Upload foto memakai URL gambar; storage dan validasi upload dapat ditambahkan pada tahap berikutnya.
+Checkout expo tanpa login: pembeli tekan Beli pada satu menu, isi nama + WA, langsung dapat satu kode ambil, bayar QRIS atau tunai di stan (tanpa payment gateway — verifikasi manual oleh penjual). Lihat `EXPO.md` untuk skema lengkap. Upload foto memakai URL gambar; storage dan validasi upload dapat ditambahkan pada tahap berikutnya.
 
 ## 🚀 Fitur
 

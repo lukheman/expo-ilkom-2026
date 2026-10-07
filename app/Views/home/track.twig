@@ -1,0 +1,21 @@
+{% extends "layout.twig" %}{% block content %}<div class="gf-container" style="max-width:760px">
+<h1 class="gf-h2">🔍 Lacak Pesanan</h1>
+<p class="text-secondary">Tanpa login. Masukkan <strong>kode ambil</strong> dari halaman pesanan berhasil (contoh: A1-001).</p>
+<form class="d-flex gap-2 mb-4" method="get" action="/home/track"><input class="form-control form-control-lg" name="kode" value="{{ kode|e }}" placeholder="A1-001" required><button class="btn btn-primary px-4">Cek</button></form>
+{% if searched %}
+  {% if orders|length == 0 %}
+    <div class="alert alert-warning">Kode <strong>{{ kode|e }}</strong> tidak ditemukan. Periksa kembali kode di struk/screenshot pesanan.</div>
+  {% else %}
+    {% for o in orders %}
+    <div class="card p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div><strong>{{ o.store_name }}</strong> <span class="badge bg-secondary">Stan {{ o.booth }}</span></div>
+        <div><span class="badge bg-dark">{{ o.pickup_code }}</span></div>
+      </div>
+      <div class="mt-2">Status: <span class="badge bg-warning text-dark">{{ o.status }}</span> • Bayar: <em>{{ o.payment_method }} ({{ o.payment_status }})</em></div>
+      <div class="text-secondary" style="font-size:13px">Menunggu → Diproses → Siap Diambil → Selesai</div>
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endif %}
+</div>{% endblock %}

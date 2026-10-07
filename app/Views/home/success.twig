@@ -1,0 +1,16 @@
+{% extends "layout.twig" %}{% block content %}<div class="gf-container" style="max-width:760px">
+<h1 class="gf-h2">✅ Pesanan Diterima!</h1>
+{% if orders|length == 0 %}
+  <div class="alert alert-warning">Kode <strong>{{ group|e }}</strong> tidak ditemukan. <a href="/home/track">Lacak pesanan</a> atau <a href="/">kembali belanja</a>.</div>
+{% else %}
+  <div class="alert alert-success">Tunjukkan <strong>kode ambil</strong> di bawah ke penjual di stan, lalu bayar sesuai metode yang dipilih. Screenshot halaman ini.</div>
+  {% for o in orders %}
+  <div class="card p-3 mb-3 text-center"><small class="text-secondary">Kode ambil — {{ o.store_name }} (Stan {{ o.booth }})</small><h2 style="letter-spacing:2px">{{ o.pickup_code }}</h2><div>Atas nama <strong>{{ o.customer_name|e }}</strong> • {{ o.payment_method|e }} • <em>{{ o.payment_status }}</em> • <strong class="price">Rp {{ o.total|number_format(0,',','.') }}</strong></div><div class="mt-1">Status: <span class="badge bg-warning text-dark">{{ o.status }}</span></div></div>
+  {% endfor %}
+  {% if orders[0].payment_method == 'QRIS' %}<div class="alert alert-info">📷 Scan QRIS di stan {{ orders[0].booth }}, penjual akan menandai lunas.</div>
+  {% else %}<div class="alert alert-info">💵 Siapkan uang tunai saat ambil di stan {{ orders[0].booth }}.</div>{% endif %}
+  <div class="card p-3 mb-3"><strong>Alur di lokasi:</strong><ol class="mb-0"><li>Datang ke stan sesuai kode ambil</li><li>Sebutkan kode + nama</li><li>Bayar (QRIS scan / tunai) bila belum lunas</li><li>Tunggu status <em>Siap Diambil</em>, pantau di <a href="/home/track?kode={{ group|e }}">Lacak Pesanan</a></li></ol></div>
+  <a href="/home/track?kode={{ group|e }}" class="btn btn-outline-secondary w-100 mb-2">Pantau Status Pesanan</a>
+  <a href="/" class="btn btn-primary w-100">Pesan Lagi</a>
+{% endif %}
+</div>{% endblock %}

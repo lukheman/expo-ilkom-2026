@@ -23,11 +23,12 @@ class AuthController extends Controller
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            User::create(['name' => $_POST['name'], 'email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => $_POST['role'], 'status' => $_POST['role'] === 'seller' ? 'pending' : 'active']);
+            // Expo: pendaftaran hanya untuk penjual. Pembeli memesan tanpa akun.
+            User::create(['name' => $_POST['name'], 'email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller', 'status' => 'pending']);
             header('Location: /auth/login');
 
             return;
-        }$this->view('auth/register', ['title' => 'Daftar']);
+        }$this->view('auth/register', ['title' => 'Daftar Penjual']);
     }
 
     public function logout()
