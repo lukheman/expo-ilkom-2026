@@ -1,0 +1,17 @@
+{
+  "plugins": ["@zackad/prettier-plugin-twig"],
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 120,
+  "twigSingleQuote": true,
+  "twigFollowOfficialCodingStandards": true,
+  "twigAlwaysBreakObjects": false,
+  "overrides": [
+    {
+      "files": "*.twig",
+      "options": {
+        "parser": "twig"
+      }
+    }
+  ]
+}

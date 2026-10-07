@@ -21,10 +21,13 @@
         }
     ],
     "require-dev": {
-        "laravel/pint": "^1.32"
+        "laravel/pint": "^1.32",
+        "vincentlanglet/twig-cs-fixer": "^4.1"
     },
     "scripts": {
         "format": "./vendor/bin/pint",
-        "format:test": "./vendor/bin/pint --test"
+        "format:test": "./vendor/bin/pint --test",
+        "format:twig": "./vendor/bin/twig-cs-fixer fix",
+        "format:twig:test": "./vendor/bin/twig-cs-fixer lint"
     }
 }

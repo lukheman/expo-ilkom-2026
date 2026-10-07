@@ -1,0 +1,13 @@
+{
+  "name": "expo-ilkom-2026-assets",
+  "private": true,
+  "description": "Formatter HTML/Twig untuk template app/Views",
+  "scripts": {
+    "format:twig": "prettier --write \"app/Views/**/*.twig\"",
+    "format:twig:check": "prettier --check \"app/Views/**/*.twig\""
+  },
+  "devDependencies": {
+    "@zackad/prettier-plugin-twig": "^0.17.0",
+    "prettier": "^3.0.0"
+  }
+}

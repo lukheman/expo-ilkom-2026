@@ -1,7 +1,11 @@
 /vendor
+/node_modules
+.twig-cs-fixer.cache
 .env
 .DS_Store
 .idea
 .vscode
 *.log
 .aider*
+
+/public/uploads/
