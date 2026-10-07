@@ -1,0 +1,23 @@
+{
+    "name": "akmal/mini-mvc-ku",
+    "description": "Mini MVC Framework with Twig and Eloquent",
+    "type": "project",
+    "require": {
+        "twig/twig": "^3.0",
+        "illuminate/database": "^10.0",
+        "illuminate/events": "^10.0",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Core\\": "core/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Akmal",
+            "email": "akmal@example.com"
+        }
+    ]
+}

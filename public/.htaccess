@@ -1,0 +1,16 @@
+Options -MultiViews
+RewriteEngine On
+
+# Prevent directory listing
+Options -Indexes
+
+# Block access to hidden files and directories
+<FilesMatch "(\.git|\.svn|\.htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Rewrite rules for clean URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

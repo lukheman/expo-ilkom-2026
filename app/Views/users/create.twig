@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+<h1>Create User</h1>
+
+<div class="card p-4">
+    <form action="/user/store" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Save</button>
+        <a href="/user" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+{% endblock %}
