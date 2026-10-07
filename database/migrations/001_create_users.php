@@ -6,7 +6,7 @@ class _001_create_users
 {
     public function up()
     {
-        if (!Capsule::schema()->hasTable('users')) {
+        if (! Capsule::schema()->hasTable('users')) {
             Capsule::schema()->create('users', function ($table) {
                 $table->increments('id');
                 $table->string('name');

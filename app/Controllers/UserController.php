@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use Core\Controller;
 use App\Models\User;
+use Core\Controller;
 
 class UserController extends Controller
 {
@@ -23,7 +23,7 @@ class UserController extends Controller
         if (isset($_POST['name']) && isset($_POST['email'])) {
             User::create([
                 'name' => $_POST['name'],
-                'email' => $_POST['email']
+                'email' => $_POST['email'],
             ]);
         }
         header('Location: /user');
@@ -45,7 +45,7 @@ class UserController extends Controller
         if ($user && isset($_POST['name']) && isset($_POST['email'])) {
             $user->update([
                 'name' => $_POST['name'],
-                'email' => $_POST['email']
+                'email' => $_POST['email'],
             ]);
         }
         header('Location: /user');

@@ -1,6 +1,30 @@
-# Framework NORION
+# RasaRaya — Marketplace Makanan Multi-Vendor (MVP)
 
-**NORION** adalah Framework MVC PHP yang ringan dan modern, dirancang untuk kecepatan dan kesederhanaan. Framework ini dilengkapi dengan alat-alat canggih untuk mempercepat pengembangan aplikasi Anda.
+Marketplace makanan Bahasa Indonesia berbasis PHP MVC, Twig, Bootstrap, dan Eloquent. MVP mencakup katalog, pencarian/filter, autentikasi, keranjang, checkout, dan dashboard penjual.
+
+## Menjalankan lokal
+
+1. Pastikan PHP 8+, Composer, dan MySQL aktif.
+2. Salin `.env.example` menjadi `.env`, lalu isi kredensial database.
+3. Install dependensi:
+   ```bash
+   composer install
+   ```
+4. Buat database dan tabel:
+   ```bash
+   php setup_db.php
+   php public/migrate.php
+   php database/seed.php
+   ```
+5. Jalankan:
+   ```bash
+   php -S localhost:8000 -t public
+   ```
+6. Buka `http://localhost:8000`.
+
+Akun seed penjual: `demo1@rasa.test`, `demo2@rasa.test`, `demo3@rasa.test`. Password: `password`. Dashboard penjual: `/seller`.
+
+Checkout MVP menyimpan pesanan ke database, tanpa integrasi payment gateway. Upload foto memakai URL gambar; storage dan validasi upload dapat ditambahkan pada tahap berikutnya.
 
 ## 🚀 Fitur
 

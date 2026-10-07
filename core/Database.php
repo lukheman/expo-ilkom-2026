@@ -8,7 +8,7 @@ class Database
 {
     public static function init()
     {
-        $config = require __DIR__ . '/../config/config.php';
+        $config = require __DIR__.'/../config/config.php';
 
         $capsule = new Capsule;
 

@@ -11,8 +11,9 @@ class Controller
 
     public function model($model)
     {
-        require_once __DIR__ . '/../app/Models/' . $model . '.php';
+        require_once __DIR__.'/../app/Models/'.$model.'.php';
         $class = "App\\Models\\$model";
+
         return new $class;
     }
 }

@@ -1,0 +1,11 @@
+{
+    "preset": "laravel",
+    "paths": [
+        "app",
+        "core",
+        "config",
+        "database",
+        "public",
+        "setup_db.php"
+    ]
+}

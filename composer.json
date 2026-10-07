@@ -19,5 +19,12 @@
             "name": "Akmal",
             "email": "akmal@example.com"
         }
-    ]
+    ],
+    "require-dev": {
+        "laravel/pint": "^1.32"
+    },
+    "scripts": {
+        "format": "./vendor/bin/pint",
+        "format:test": "./vendor/bin/pint --test"
+    }
 }
