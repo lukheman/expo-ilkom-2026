@@ -12,7 +12,7 @@
     <link href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.min.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/logo/logo-ladusing.png" />
     <style>
-      :root{ --primary:#ffc41c; --secondary:#e52535; --bg:#ffffff; --bg2:#ebf3ff; --green-bg:#eaffea; --green:#00880d;
+      :root{ --bs-primary:#E2543A; --bs-primary-rgb:226,84,58; --bs-secondary:#7A1020; --bs-secondary-rgb:122,16,32; --bs-success:#7C9A2E; --bs-success-rgb:124,154,46; --bs-danger:#C0262D; --bs-danger-rgb:192,38,45; --bs-warning:#F2B52E; --bs-warning-rgb:242,181,46; --bs-info:#2B4570; --bs-info-rgb:43,69,112; --bs-light:#FFF4E6; --bs-light-rgb:255,244,230; --bs-dark:#2B1115; --bs-dark-rgb:43,17,21; --primary:#E2543A; --secondary:#7A1020; --bg:#ffffff; --bg2:#FFF4E6; --green-bg:#EBF1DA; --green:#7C9A2E;
       --ink:#000000; --muted:#666666; --line:#e8e8e8; --line-soft:#fafafa; --sh-card:rgba(179,190,232,.61) 0 .7px 12px
       0; --sh-pop:rgba(0,0,0,.12) 0 2px 8px 0; } *{box-sizing:border-box}
       body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe
@@ -23,7 +23,7 @@
       .gf-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.5px;text-decoration:none;color:#000}
       .gf-logo img{height:48px;width:auto;display:block}
 .gf-logo-text{display:flex;flex-direction:column;line-height:1.05}
-.gf-logo-text small{font-size:12px;font-weight:700;letter-spacing:3px;color:#e52535}
+.gf-logo-text small{font-size:12px;font-weight:700;letter-spacing:3px;color:#7A1020}
       .gf-logo-mark{width:32px;height:32px;border-radius:50%;background:var(--secondary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
       .gf-nav{display:flex;gap:8px;align-items:center} .gf-nav-link{padding:16px
       16px;font-weight:600;font-size:16px;color:#000;text-decoration:none;position:relative;white-space:nowrap}
@@ -32,7 +32,7 @@
       .gf-location{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9999px;padding:8px
       16px;background:#fff;font-size:14px;color:#000;min-height:44px;max-width:260px} .gf-location
       span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-      .gf-avatar{width:44px;height:44px;border-radius:50%;background:#9d59c0;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none}
+      .gf-avatar{width:44px;height:44px;border-radius:50%;background:#7A1020;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;text-decoration:none}
       .gf-cart{position:relative;display:inline-flex;align-items:center;gap:6px;border:1px solid
       var(--line);border-radius:9999px;padding:8px
       14px;text-decoration:none;font-weight:600;font-size:14px;background:#fff;min-height:44px}
@@ -67,7 +67,7 @@
       kategori bulat */ .gf-cats{display:flex;gap:16px;overflow-x:auto;padding:12px 0 8px;border-bottom:1px solid
       #f0f0f0;scrollbar-width:none} .gf-cats::-webkit-scrollbar{display:none} .gf-cat{flex:0 0
       88px;text-align:center;text-decoration:none;color:#000}
-      .gf-cat-img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#ffe9ec;margin:0 auto
+      .gf-cat-img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#F7E3D8;margin:0 auto
       8px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;border:2px solid
       transparent} .gf-cat.active .gf-cat-img{border-color:var(--green)}
       .gf-cat-name{font-size:14px;font-weight:500;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -89,17 +89,16 @@
       .gf-store{font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
       .gf-price{font-size:15px;font-weight:700;margin-top:4px}
       .gf-add{margin-top:8px;background:var(--primary);border:1px solid
-      var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#000;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
-      .gf-add:hover{background:#e5aa00} /* toko */
+      var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#fff;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
+      .gf-add:hover{background:#C7452F} /* toko */
       .gf-stores{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
       @media(min-width:640px){.gf-stores{grid-template-columns:repeat(3,1fr)}} .gf-store-card{border:1px solid
       #f0f0f0;border-radius:16px;padding:16px;background:#fff;box-shadow:var(--sh-card)} /* compat bootstrap pages */
       .card{border:1px solid var(--line-soft);border-radius:16px;box-shadow:var(--sh-card)}
       .btn{min-height:44px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
-      .btn-primary{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important}
-      .btn-primary:hover{background:#e5aa00!important;border-color:#e5aa00!important;color:#000!important}
-      .btn-warning{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important}
-      .btn-success{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
+      .btn-primary{background:var(--primary)!important;border-color:var(--primary)!important;color:#fff!important}
+      .btn-primary:hover{background:#C7452F!important;border-color:#C7452F!important;color:#fff!important}
+            .btn-success{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
       .btn-danger{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
       .btn-outline-danger{color:var(--secondary)!important;border-color:var(--secondary)!important}
       .btn-outline-danger:hover{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
@@ -141,10 +140,10 @@
       .datatable-card table.datatable{margin:0!important;width:100%!important} .datatable-card table.datatable thead
       th{white-space:nowrap;cursor:pointer} .datatable-card table.datatable thead th.no-sort{cursor:default}
       .datatable-card .dt-empty{color:var(--muted)} .datatable-card .dt-scroll{border-radius:12px}
-      /* ===== breadcrumb pill modern tema expo (global admin/seller) ===== */ .breadcrumb{background:#fffdf4;border:1px
+      /* ===== breadcrumb pill modern tema expo (global admin/seller) ===== */ .breadcrumb{background:#FFF9EF;border:1px
       solid #f0f0f0;border-radius:9999px;padding:8px 18px;margin-bottom:18px;box-shadow:var(--sh-card);font-size:14px;align-items:center}
       .breadcrumb-item{font-weight:600;display:inline-flex;align-items:center} .breadcrumb-item a{color:#000;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-      .breadcrumb-item a:hover{color:#b42c3f;text-decoration:underline} .breadcrumb-item+.breadcrumb-item::before{content:"›";color:#999;font-weight:800}
+      .breadcrumb-item a:hover{color:#5C0D18;text-decoration:underline} .breadcrumb-item+.breadcrumb-item::before{content:"›";color:#999;font-weight:800}
       .breadcrumb-item.active{color:#000!important;background:var(--primary);border-radius:9999px;padding:2px 12px;font-weight:700}
       @media(max-width:639px){ .breadcrumb{font-size:13px;padding:6px 14px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap} }
       @media(max-width:639px){ .datatable-card{padding:12px!important} .datatable-card .dt-search{width:100%}
@@ -152,14 +151,38 @@
     </style>
   </head>
   <body>
+    {% if toast %}
+      <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:3000">
+        <div
+          id="appToast"
+          class="toast align-items-center text-white bg-{{ toast.type == 'danger' ? 'danger' : 'success' }} border-0"
+          role="alert"
+          data-bs-delay="4000"
+        >
+          <div class="d-flex">
+            <div class="toast-body">
+              <i class="bi {{ toast.type == 'danger' ? 'bi-exclamation-circle' : 'bi-check-circle' }}"></i>
+              {{ toast.message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function(){
+        var t = document.getElementById('appToast');
+        if(t && window.bootstrap){ new bootstrap.Toast(t).show(); }
+        });
+      </script>
+    {% endif %}
     {% if chrome == 'admin' or chrome == 'seller' %}
       <nav class="panel-top">
-        <button class="btn btn-sm btn-outline-secondary panel-burger" id="panelBurger" type="button">
+        <button class="btn btn-sm btn-secondary panel-burger" id="panelBurger" type="button">
           <i class="bi bi-list"></i>
         </button>
         <strong>{{ panel|default('Panel') }}</strong>
         <span class="ms-auto"></span>
-        <a href="/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-globe"></i> Lihat situs</a>
+        <a href="/" class="btn btn-sm btn-secondary"><i class="bi bi-globe"></i> Lihat situs</a>
       </nav>
     {% else %}
       <header class="gf-header">
@@ -169,11 +192,10 @@
             <a class="gf-nav-link" href="/">Beranda</a>
           </nav>
           <div class="gf-header-right">
-            <span class="gf-location"><i class="bi bi-geo-alt-fill"></i> <span>Expo • Ambil di stan</span></span>
+            <span class="gf-location"><i class="bi bi-geo-alt-fill"></i> <span>Auditorium USN Kolaka, Popalia</span></span>
             <a class="gf-cart" href="/home/track">
               <i class="bi bi-search"></i> <span class="d-none d-sm-inline">Lacak</span>
             </a>
-            <a class="gf-btn-masuk" href="/auth/login" title="Masuk penjual">Masuk penjual</a>
           </div>
         </div>
       </header>
@@ -182,7 +204,7 @@
 
     {% endblock %}
     <div class="gf-footer">
-      KewirausahaanDigital FTI • Ambil di stan • Bayar QRIS/tunai • <a href="/auth/login">Penjual</a> • <a href="/admin">Admin</a>
+      KewirausahaanDigital FTI • Ambil di stan • Bayar QRIS/tunai • <a href="/login">Penjual</a> • <a href="/admin">Admin</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>

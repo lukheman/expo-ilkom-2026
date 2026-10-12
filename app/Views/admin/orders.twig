@@ -8,11 +8,11 @@
   </nav>
   <h1 class="gf-h2">Semua Pesanan</h1>
   <div class="d-flex gap-2 flex-wrap mb-3 filter-bar">
-    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-outline-secondary{% endif %}" href="/admin/orders">
+    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-secondary{% endif %}" href="/admin/orders">
       Semua
     </a>{% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
       <a
-        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-outline-secondary{% endif %}"
+        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-secondary{% endif %}"
         href="/admin/orders?status={{ s }}"
       >
         {{ s }}
@@ -44,10 +44,24 @@
               {% if o.payment_status == 'Lunas' %}
                 <span class="badge bg-success">Lunas</span>
               {% else %}
-                <span class="badge bg-warning text-dark">Belum bayar</span>
+                <span class="badge bg-warning text-white">Belum bayar</span>
               {% endif %}
             </td>
-            <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+            <td>
+              {% if o.status == 'Menunggu' %}
+                <span class="badge bg-secondary">Menunggu</span>
+              {% elseif o.status == 'Diproses' %}
+                <span class="badge bg-info text-white">Diproses</span>
+              {% elseif o.status == 'Siap Diambil' %}
+                <span class="badge bg-warning text-white">Siap Diambil</span>
+              {% elseif o.status == 'Selesai' %}
+                <span class="badge bg-success">Selesai</span>
+              {% elseif o.status == 'Dibatalkan' %}
+                <span class="badge bg-danger">Dibatalkan</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ o.status }}</span>
+              {% endif %}
+            </td>
           </tr>
         {% else %}
           <tr>
