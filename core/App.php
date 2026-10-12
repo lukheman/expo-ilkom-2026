@@ -17,6 +17,34 @@ class App
         }
         $url = $this->parseUrl();
 
+        // Alias pendek: satu halaman login untuk admin & seller
+        $aliases = [
+            'login' => ['AuthController', 'login'],
+            'logout' => ['AuthController', 'logout'],
+        ];
+        if (isset($url[0]) && isset($aliases[$url[0]])) {
+            [$aliasController, $aliasMethod] = $aliases[$url[0]];
+            require_once __DIR__.'/../app/Controllers/'.$aliasController.'.php';
+            $class = 'App\\Controllers\\'.$aliasController;
+            $controller = new $class;
+            $params = array_values(array_slice($url, 1));
+            call_user_func_array([$controller, $aliasMethod], $params);
+
+            return;
+        }
+
+        // Kanonikalisasi URL lama ke route pendek
+        if (($url[0] ?? '') === 'auth' && ($url[1] ?? '') === 'login') {
+            header('Location: /login');
+
+            return;
+        }
+        if (($url[0] ?? '') === 'auth' && ($url[1] ?? '') === 'logout') {
+            header('Location: /logout');
+
+            return;
+        }
+
         if (isset($url[0])) {
             $controllerName = ucfirst($url[0]).'Controller';
             $path = __DIR__.'/../app/Controllers/'.$controllerName.'.php';

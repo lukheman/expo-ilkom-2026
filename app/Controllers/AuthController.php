@@ -25,7 +25,8 @@ class AuthController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Expo: pendaftaran hanya untuk penjual. Pembeli memesan tanpa akun.
             User::create(['name' => $_POST['name'], 'email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller', 'status' => 'pending']);
-            header('Location: /auth/login');
+            $this->toast('Pendaftaran berhasil. Menunggu persetujuan admin.');
+            header('Location: /login');
 
             return;
         }$this->view('auth/register', ['title' => 'Daftar Penjual']);
@@ -34,6 +35,8 @@ class AuthController extends Controller
     public function logout()
     {
         session_destroy();
+        session_start();
+        $_SESSION['toast'] = ['message' => 'Anda berhasil keluar.', 'type' => 'success'];
         header('Location: /');
     }
 }

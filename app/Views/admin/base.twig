@@ -7,9 +7,9 @@
     .admin-side h4{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin:4px 12px 8px} /* Bootstrap nav-pills + sentuhan tema expo */ .admin-side
     .nav-link{display:flex;align-items:center;gap:10px;color:#000;font-weight:600;font-size:14px;border-radius:12px;padding:12px;min-height:44px}
     .admin-side .nav-link:hover{background:#fafafa} .admin-side .nav-pills
-    .nav-link.active{background:#ffc41c;color:#000} .admin-side .nav-link.logout{color:#e52535} .admin-side
-    .nav-link.logout:hover{background:#fdecec;color:#b42c3f}
-    .admin-badge{margin-left:auto;background:#e52535;color:#fff;font-size:11px;font-weight:700;border-radius:9999px;padding:2px
+    .nav-link.active{background:#E2543A;color:#fff} .admin-side .nav-link.logout{color:#C0262D} .admin-side
+    .nav-link.logout:hover{background:#F9E2E3;color:#8E1B22}
+    .admin-badge{margin-left:auto;background:#C0262D;color:#fff;font-size:11px;font-weight:700;border-radius:9999px;padding:2px
     8px}
     .side-logo{display:block;text-align:center;padding:8px 0 12px}
     .side-logo img{width:140px;height:auto}
@@ -17,10 +17,10 @@
     body.panel-closed .admin-side{transform:translateX(-110%)}
     body.panel-closed .admin-main,body.panel-closed .gf-footer{margin-left:0} .admin-main .gf-h2{margin-top:0} /* Tema
     kustom di atas Bootstrap */ .admin-main .card{border-radius:16px;border:1px solid #f0f0f0} .admin-main
-    .table{--bs-table-hover-bg:#fff8e6} .admin-main .table thead
-    th{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#666;background:#fffdf4;border-bottom:2px solid
-    #ffc41c;white-space:nowrap} .stat-card{border-top:4px solid #ffc41c} .stat-card.green{border-top-color:#00880d}
-    .stat-card.red{border-top-color:#e52535} .stat-card.blue{border-top-color:#4a7ddb} .stat-icon{font-size:28px}
+    .table{--bs-table-hover-bg:#FCEFD9} .admin-main .table thead
+    th{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#666;background:#FFF9EF;border-bottom:2px solid
+    #E2543A;white-space:nowrap} .stat-card{border-top:4px solid #E2543A} .stat-card.green{border-top-color:#7C9A2E}
+    .stat-card.red{border-top-color:#C0262D} .stat-card.blue{border-top-color:#2B4570} .stat-icon{font-size:28px}
     .gf-footer{margin-left:260px} .admin-menu-btn{display:none} .admin-scrim{display:none} @media(max-width:860px){
     .admin-main{margin-left:0;padding:16px 16px 48px} .gf-footer{margin-left:0}
     .admin-side{transform:translateX(-110%);transition:transform .25s ease;width:270px} body.panel-open
@@ -56,7 +56,7 @@
     <div class="admin-div" style="border-top:1px solid #f0f0f0;margin:8px 0"></div>
     <nav class="nav nav-pills flex-column">
       <a class="nav-link" href="/"><i class="bi bi-globe"></i> Lihat situs</a>
-      <a class="nav-link logout" href="/auth/logout"><i class="bi bi-box-arrow-right"></i> Keluar</a>
+      <a class="nav-link logout" href="/logout"><i class="bi bi-box-arrow-right"></i> Keluar</a>
     </nav>
   </aside>
   <div class="admin-scrim" id="panelScrim"></div>
