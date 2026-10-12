@@ -10,7 +10,7 @@ use App\Models\Store;
 use App\Models\User;
 use Core\Database;
 
-User::firstOrCreate(['email' => 'admin@rasa.test'], ['name' => 'Admin Expo', 'password' => password_hash('admin123', PASSWORD_DEFAULT), 'role' => 'admin', 'status' => 'active']);
+User::firstOrCreate(['email' => 'admin@gmail.com'], ['name' => 'Admin Expo', 'password' => password_hash('password123', PASSWORD_DEFAULT), 'role' => 'admin', 'status' => 'active']);
 
 $cat = [];
 foreach (['Makanan Berat', 'Camilan', 'Minuman'] as $n) {
@@ -20,8 +20,8 @@ $data = [['Dapur Nusantara', 'Masakan rumahan hangat dengan resep warisan keluar
 $stores = [];
 $booths = ['Dapur Nusantara' => 'A1', 'Kedai Rasa' => 'A2', 'Segar Sari' => 'A3'];
 foreach (['Dapur Nusantara', 'Kedai Rasa', 'Segar Sari'] as $i => $name) {
-    $u = User::firstOrCreate(['email' => 'demo'.($i + 1).'@rasa.test'], ['name' => 'Pemilik '.$name, 'password' => password_hash('password', PASSWORD_DEFAULT), 'role' => 'seller', 'status' => 'active']);
-    $stores[$name] = Store::firstOrCreate(['name' => $name], ['user_id' => $u->id, 'description' => $data[$i][1], 'address' => 'Jakarta Selatan', 'opening_hours' => '08:00 - 21:00', 'approved' => true, 'booth_number' => $booths[$name]]);
+    $u = User::firstOrCreate(['email' => 'demo'.($i + 1).'@gmail.com'], ['name' => 'Pemilik '.$name, 'password' => password_hash('password123', PASSWORD_DEFAULT), 'role' => 'seller', 'status' => 'active']);
+    $stores[$name] = Store::firstOrCreate(['name' => $name], ['user_id' => $u->id, 'description' => $data[$i][1], 'approved' => true, 'booth_number' => $booths[$name]]);
     if (empty($stores[$name]->booth_number)) {
         $stores[$name]->update(['booth_number' => $booths[$name]]);
     }
