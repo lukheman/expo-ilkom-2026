@@ -8,11 +8,11 @@
   </nav>
   <h1 class="gf-h2"><i class="bi bi-receipt"></i> Pesanan Masuk</h1>
   <div class="d-flex gap-2 flex-wrap mb-3 filter-bar">
-    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-outline-secondary{% endif %}" href="/seller/orders">
+    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-secondary{% endif %}" href="/seller/orders">
       Semua
     </a>{% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
       <a
-        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-outline-secondary{% endif %}"
+        class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-secondary{% endif %}"
         href="/seller/orders?status={{ s }}"
       >
         {{ s }}
@@ -51,7 +51,7 @@
               {% if o.payment_status == 'Lunas' %}
                 <span class="badge bg-success">Lunas</span>
               {% else %}
-                <span class="badge bg-warning text-dark">Belum bayar</span><br /><a
+                <span class="badge bg-warning text-white">Belum bayar</span><br /><a
                   href="/seller/paid/{{ o.id }}"
                   class="btn btn-sm btn-success mt-1"
                 >
@@ -59,19 +59,33 @@
                 </a>
               {% endif %}
             </td>
-            <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+            <td>
+              {% if o.status == 'Menunggu' %}
+                <span class="badge bg-secondary">Menunggu</span>
+              {% elseif o.status == 'Diproses' %}
+                <span class="badge bg-info text-white">Diproses</span>
+              {% elseif o.status == 'Siap Diambil' %}
+                <span class="badge bg-warning text-white">Siap Diambil</span>
+              {% elseif o.status == 'Selesai' %}
+                <span class="badge bg-success">Selesai</span>
+              {% elseif o.status == 'Dibatalkan' %}
+                <span class="badge bg-danger">Dibatalkan</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ o.status }}</span>
+              {% endif %}
+            </td>
             <td>
               <div class="table-actions" role="group">
-                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Diproses">
+                <a class="btn btn-sm btn-info" href="/seller/status/{{ o.id }}/Diproses">
                   <i class="bi bi-arrow-repeat"></i> Proses
                 </a>
-                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Siap%20Diambil">
+                <a class="btn btn-sm btn-warning" href="/seller/status/{{ o.id }}/Siap%20Diambil">
                   <i class="bi bi-bag-check"></i> Siap diambil
                 </a>
-                <a class="btn btn-sm btn-outline-secondary" href="/seller/status/{{ o.id }}/Selesai">
+                <a class="btn btn-sm btn-success" href="/seller/status/{{ o.id }}/Selesai">
                   <i class="bi bi-check-lg"></i> Selesai
                 </a>
-                <a class="btn btn-sm btn-outline-danger" href="/seller/status/{{ o.id }}/Dibatalkan">
+                <a class="btn btn-sm btn-danger" href="/seller/status/{{ o.id }}/Dibatalkan">
                   <i class="bi bi-x-lg"></i> Batal
                 </a>
               </div>

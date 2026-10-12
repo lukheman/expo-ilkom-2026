@@ -20,7 +20,7 @@ class SellerController extends Controller
     {
         $u = $this->user();
         if (! $u || $u->role !== 'seller') {
-            header('Location: /auth/login');
+            header('Location: /login');
 
             return [null, null];
         }
@@ -96,6 +96,7 @@ class SellerController extends Controller
         $o = $this->ownOrder($id);
         if ($o && in_array($to, $allowed, true)) {
             $o->update(['status' => $to]);
+            $this->toast('Status pesanan diubah menjadi '.$to.'.');
         }
         header('Location: /seller/orders');
     }
@@ -105,6 +106,7 @@ class SellerController extends Controller
         $o = $this->ownOrder($id);
         if ($o) {
             $o->update(['payment_status' => 'Lunas']);
+            $this->toast('Pesanan ditandai lunas.');
         }
         header('Location: /seller/orders');
     }
@@ -115,12 +117,9 @@ class SellerController extends Controller
         if (! $u) {
             return;
         }
-        $uploadMsg = ['besar' => 'Foto terlalu besar (maks 2MB).', 'tipe' => 'Format foto harus JPG, PNG, WebP, atau GIF.', 'gagal' => 'Upload foto gagal, coba lagi.'][$_GET['upload'] ?? ''] ?? null;
         $this->sellerView('seller/products', 'products', $s, [
             'title' => 'Kelola Produk',
             'products' => $s ? Product::where('store_id', $s->id)->orderBy('id', 'desc')->get() : [],
-            'categories' => Category::all(),
-            'uploadMsg' => $uploadMsg,
         ]);
     }
 
@@ -183,7 +182,7 @@ class SellerController extends Controller
         }
         $image = $this->uploadImage($_FILES['photo'] ?? null, $uploadError);
         if ($uploadError) {
-            header('Location: /seller/products?upload='.$uploadError);
+            header('Location: /seller/create?upload='.$uploadError);
 
             return;
         }
@@ -197,7 +196,18 @@ class SellerController extends Controller
             'image' => $image ?? (substr(trim($_POST['image'] ?? ''), 0, 255) ?: null),
             'active' => true,
         ]);
+        $this->toast('Produk berhasil ditambahkan.');
         header('Location: /seller/products');
+    }
+
+    public function create()
+    {
+        [$u,$s] = $this->seller();
+        if (! $u) {
+            return;
+        }
+        $uploadMsg = ['besar' => 'Foto terlalu besar (maks 2MB).', 'tipe' => 'Format foto harus JPG, PNG, WebP, atau GIF.', 'gagal' => 'Upload foto gagal, coba lagi.'][$_GET['upload'] ?? ''] ?? null;
+        $this->sellerView('seller/product_create', 'products', $s, ['title' => 'Tambah Produk', 'categories' => Category::all(), 'uploadMsg' => $uploadMsg]);
     }
 
     public function edit($id)
@@ -212,7 +222,7 @@ class SellerController extends Controller
 
             return;
         }
-        $this->sellerView('seller/product_form', 'products', $s, ['title' => 'Ubah Produk', 'p' => $p, 'categories' => Category::all()]);
+        $this->sellerView('seller/product_form', 'products', $s, ['title' => 'Ubah Produk', 'p' => $p, 'categories' => Category::all(), 'uploadMsg' => ['besar' => 'Foto terlalu besar (maks 2MB).', 'tipe' => 'Format foto harus JPG, PNG, WebP, atau GIF.', 'gagal' => 'Upload foto gagal, coba lagi.'][$_GET['upload'] ?? ''] ?? null]);
     }
 
     public function update($id)
@@ -228,7 +238,7 @@ class SellerController extends Controller
         if ($p) {
             $image = $this->uploadImage($_FILES['photo'] ?? null, $uploadError);
             if ($uploadError) {
-                header('Location: /seller/products?upload='.$uploadError);
+                header('Location: /seller/edit/'.$p->id.'?upload='.$uploadError);
 
                 return;
             }
@@ -245,6 +255,7 @@ class SellerController extends Controller
                 'stock' => max(0, (int) ($_POST['stock'] ?? $p->stock)),
                 'image' => $newImage,
             ]);
+            $this->toast('Produk berhasil diubah.');
         }
         header('Location: /seller/products');
     }
@@ -261,6 +272,7 @@ class SellerController extends Controller
         $p = Product::where('id', (int) $id)->where('store_id', $s->id)->first();
         if ($p) {
             $p->update(['active' => ! $p->active]);
+            $this->toast($p->active ? 'Produk berhasil diaktifkan.' : 'Produk berhasil dinonaktifkan.');
         }
         header('Location: /seller/products');
     }
@@ -278,6 +290,7 @@ class SellerController extends Controller
         if ($p) {
             $this->removeLocalImage($p->image);
             $p->delete();
+            $this->toast('Produk berhasil dihapus.');
         }
         header('Location: /seller/products');
     }
@@ -288,7 +301,8 @@ class SellerController extends Controller
         if (! $u) {
             return;
         }
-        $this->sellerView('seller/store', 'store', $s, ['title' => 'Profil Toko']);
+        $uploadMsg = ['besar' => 'Foto terlalu besar (maks 2MB).', 'tipe' => 'Format foto harus JPG, PNG, WebP, atau GIF.', 'gagal' => 'Upload foto gagal, coba lagi.'][$_GET['upload'] ?? ''] ?? null;
+        $this->sellerView('seller/store', 'store', $s, ['title' => 'Profil Toko', 'uploadMsg' => $uploadMsg]);
     }
 
     public function updateStore()
@@ -300,13 +314,33 @@ class SellerController extends Controller
             return;
         }
         $s = Store::firstOrCreate(['user_id' => $u->id], ['name' => 'Stan '.$u->name, 'approved' => true]);
-        $s->update([
+        $qris = $this->uploadImage($_FILES['qris'] ?? null, $uploadError);
+        if ($uploadError) {
+            header('Location: /seller/store?upload='.$uploadError);
+
+            return;
+        }
+        $photo = $this->uploadImage($_FILES['photo'] ?? null, $uploadError);
+        if ($uploadError) {
+            header('Location: /seller/store?upload='.$uploadError);
+
+            return;
+        }
+        $data = [
             'name' => substr(trim($_POST['name'] ?? $s->name), 0, 100),
             'description' => substr(trim($_POST['description'] ?? ''), 0, 500),
             'booth_number' => substr(trim($_POST['booth'] ?? ''), 0, 10) ?: null,
-            'address' => substr(trim($_POST['address'] ?? ''), 0, 255) ?: null,
-            'opening_hours' => substr(trim($_POST['hours'] ?? ''), 0, 50) ?: null,
-        ]);
+        ];
+        if ($qris) {
+            $this->removeLocalImage($s->qris_image);
+            $data['qris_image'] = $qris;
+        }
+        if ($photo) {
+            $this->removeLocalImage($s->photo);
+            $data['photo'] = $photo;
+        }
+        $s->update($data);
+        $this->toast('Profil toko berhasil disimpan.');
         header('Location: /seller/store');
     }
 }
