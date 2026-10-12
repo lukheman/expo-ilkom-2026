@@ -23,6 +23,8 @@ class View
     public static function render($view, $data = [])
     {
         self::init();
+        $data['toast'] = $_SESSION['toast'] ?? null;
+        unset($_SESSION['toast']);
         echo self::$twig->render($view.'.twig', $data);
     }
 }
