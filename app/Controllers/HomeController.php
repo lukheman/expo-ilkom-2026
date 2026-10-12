@@ -55,8 +55,6 @@ class HomeController extends Controller
             }
             if ($filter === 'termurah') {
                 $query->orderBy('price', 'asc');
-            } elseif ($filter === 'rating') {
-                $query->orderBy('price', 'asc');
             } else {
                 $query->orderBy('id', 'desc');
             }
@@ -79,22 +77,6 @@ class HomeController extends Controller
             foreach ($products as $p) {
                 $p->store_name = $storeMap[$p->store_id] ?? 'Toko';
                 $p->category_name = $catMap[$p->category_id] ?? '';
-                $p->sold = 60 + (($p->id * 137) % 800);
-                $r = 43 + ($p->id % 7);
-                $p->rating = number_format($r / 10, 1);
-                $p->reviews = 20 + (($p->id * 53) % 500);
-                $m1 = 15 + ($p->id % 20);
-                $p->time = $m1.'-'.($m1 + 10).' mnt';
-                $p->original = (int) (ceil(((float) $p->price * 1.45) / 500) * 500);
-            }
-            if ($filter === 'laris') {
-                $products = $products->filter(fn ($p) => $p->sold > 60)->values();
-            }
-            if ($filter === 'rating') {
-                $products = $products->filter(fn ($p) => $p->rating >= 4.5)->values();
-            }
-            if ($filter === 'populer') {
-                $products = $products->sortByDesc('sold')->values();
             }
         } catch (\Throwable $e) {
             $products = [];
@@ -119,10 +101,8 @@ class HomeController extends Controller
         // Langkah 1: dari tombol "Beli Langsung" di katalog.
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id']) && ($_POST['step'] ?? '') !== 'confirm') {
             $pid = (int) $_POST['product_id'];
-            $size = in_array($_POST['size'] ?? '', ['Reguler', 'Besar'], true) ? $_POST['size'] : 'Reguler';
-            $ice = in_array($_POST['ice'] ?? '', ['Sedikit Es', 'Es Normal'], true) ? $_POST['ice'] : 'Es Normal';
-            $qty = max(1, min(10, (int) ($_POST['qty'] ?? 1)));
             $p = Product::find($pid);
+            $qty = max(1, min(10, (int) ($_POST['qty'] ?? 1)));
             if (! $p || ! $p->active || $qty > $p->stock) {
                 header('Location: /?habis=1');
 
@@ -131,9 +111,9 @@ class HomeController extends Controller
             $_SESSION['buy'] = [
                 'id' => $pid,
                 'qty' => $qty,
-                'unit_price' => (float) $p->price + ($size === 'Besar' ? 5000 : 0),
-                'size' => $size,
-                'ice' => $ice,
+                'unit_price' => (float) $p->price,
+                'size' => '',
+                'ice' => '',
             ];
             header('Location: /home/checkout');
 
@@ -187,7 +167,7 @@ class HomeController extends Controller
                     'product_id' => $item->id,
                     'quantity' => $item->qty,
                     'price' => $item->unit_price,
-                    'variant' => $item->size_opt.' • '.$item->ice_opt,
+                    'variant' => null,
                 ]);
                 Product::where('id', $item->id)->decrement('stock', $item->qty);
                 unset($_SESSION['buy']);
@@ -221,6 +201,7 @@ class HomeController extends Controller
             foreach ($orders as $o) {
                 $o->store_name = $storeMap[$o->store_id]->name ?? 'Stan '.$o->store_id;
                 $o->booth = ($storeMap[$o->store_id]->booth_number ?? null) ?: 'S'.$o->store_id;
+                $o->qris_image = $storeMap[$o->store_id]->qris_image ?? null;
             }
         }
         $this->view('home/success', ['title' => 'Pesanan Berhasil', 'group' => $group, 'orders' => $orders]);

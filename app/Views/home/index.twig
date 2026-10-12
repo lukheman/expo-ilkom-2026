@@ -36,22 +36,19 @@
         <input type="hidden" name="category" value="{{ cat }}" />
       {% endif %}
       <button class="gf-search-like" type="submit" title="Cari">
-        <i class="bi bi-hand-thumbs-up-fill" style="color:#e52535"></i>
+        <i class="bi bi-hand-thumbs-up-fill" style="color:#7A1020"></i>
       </button>
     </form>
   </div>
 
   <div class="gf-container">
-    <h2 class="gf-h2">{{ products|length }}+ menu expo, ambil di stan</h2>
+    <h2 class="gf-h2">{{ products|length }} menu expo, ambil di stan</h2>
 
     <div class="gf-filters">
       <a class="gf-pill" href="/" title="Filter"><i class="bi bi-funnel"></i></a>
       <a class="gf-pill {% if filter == 'promo' %}active{% endif %}" href="/?filter=promo">Promo hidangan</a>
       <a class="gf-pill {% if filter == 'termurah' %}active{% endif %}" href="/?filter=termurah">Termurah</a>
       <a class="gf-pill {% if filter == 'hemat20' %}active{% endif %}" href="/?filter=hemat20">Di bawah 20rb</a>
-      <a class="gf-pill {% if filter == 'populer' %}active{% endif %}" href="/?filter=populer">Resto populer</a>
-      <a class="gf-pill {% if filter == 'laris' %}active{% endif %}" href="/?filter=laris">Terjual &gt; 60+</a>
-      <a class="gf-pill {% if filter == 'rating' %}active{% endif %}" href="/?filter=rating">Rating hidangan 4.5+</a>
       <a class="gf-pill" href="/seller">Jadi penjual</a>
     </div>
 
@@ -60,7 +57,7 @@
         class="gf-cat {% if not cat %}active{% endif %}"
         href="/?{{ q ? 'q=' ~ q ~ '&' : '' }}{{ filter ? 'filter=' ~ filter ~ '&' : '' }}"
       >
-        <div class="gf-cat-img" style="background:#ffe9ec">
+        <div class="gf-cat-img" style="background:#F7E3D8">
           <i class="bi bi-grid-fill"></i>
         </div>
         <div class="gf-cat-name">
@@ -99,44 +96,45 @@
         <div class="gf-card">
           <div class="gf-card-imgwrap">
             <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
-            {% if p.price < 25000 %}
-              <div class="gf-badge">
-                30%<br />OFF
+            {% if p.stock <= 0 %}
+              <div class="gf-sold">
+                <i class="bi bi-x-circle"></i> Habis
               </div>
             {% endif %}
-            <div class="gf-sold">
-              <i class="bi bi-graph-up-arrow"></i> {{ p.sold }}+ terjual
-            </div>
           </div>
           <div class="gf-card-body">
-            <div class="gf-meta">
-              {{ p.time }} • <i class="bi bi-star-fill"></i><b>{{ p.rating }} {{ p.reviews }}+</b>
-            </div>
             <h3 class="gf-title">{{ p.name }}</h3>
             <div class="gf-store">
-              {{ p.store_name }}
+              {{ p.store_name }}{% if p.category_name %} • {{ p.category_name }}{% endif %}
             </div>
-            <div style="font-size:13px;color:#666">
-              <i class="bi bi-sliders"></i> Dapat disesuaikan
+            <div class="gf-meta">
+              {% if p.stock > 0 %}
+                Sisa {{ p.stock }}
+              {% else %}
+                Stok habis
+              {% endif %}
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px">
               <div>
-                <span style="font-weight:700">Rp {{ p.price|number_format(0, ',', '.') }}</span>{% if p.price < 25000 %}
-                  <s style="color:#999;font-size:13px">Rp {{ p.original|number_format(0, ',', '.') }}</s>
-                {% endif %}
+                <span style="font-weight:700">Rp {{ p.price|number_format(0, ',', '.') }}</span>
               </div>
-              <button
-                class="gf-add-outline js-open-modal"
-                type="button"
-                data-id="{{ p.id }}"
-                data-name="{{ p.name|e('html_attr') }}"
-                data-desc="{{ p.description|e('html_attr') }}"
-                data-price="{{ p.price }}"
-                data-original="{{ p.original }}"
-                data-image="{{ p.image|e('html_attr') }}"
-              >
-                Beli
-              </button>
+              {% if p.stock > 0 %}
+                <button
+                  class="gf-add-outline js-open-modal"
+                  type="button"
+                  data-id="{{ p.id }}"
+                  data-name="{{ p.name|e('html_attr') }}"
+                  data-desc="{{ p.description|e('html_attr') }}"
+                  data-price="{{ p.price }}"
+                  data-image="{{ p.image|e('html_attr') }}"
+                >
+                  Beli
+                </button>
+              {% else %}
+                <button class="gf-add-outline" type="button" disabled>
+                  Habis
+                </button>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -151,15 +149,23 @@
     <div class="gf-stores">
       {% for s in stores %}
         <div class="gf-store-card">
-          <div style="font-size:28px">
-            <i class="bi bi-shop"></i>
-          </div>
+          {% if s.photo %}
+            <img
+              src="{{ s.photo|e }}"
+              alt="{{ s.name|e }}"
+              style="width:100%;height:140px;object-fit:cover;border-radius:12px"
+            />
+          {% else %}
+            <div style="font-size:28px">
+              <i class="bi bi-shop"></i>
+            </div>
+          {% endif %}
           <h5 style="margin:8px 0">{{ s.name }}</h5>
           <p style="color:#666;font-size:14px;margin:0">
             {{ s.description }}
           </p>
           <div style="font-size:13px;color:#666;margin-top:8px">
-            Stan {{ s.booth_number|default('—') }} • {{ s.opening_hours }}
+            Stan {{ s.booth_number|default('—') }}
           </div>
         </div>
       {% endfor %}
@@ -167,8 +173,8 @@
   </div>
 
   <style>
-    .gf-add-outline{border:1px solid #00880d;color:#055e45;background:#fff;border-radius:9999px;padding:8px
-    24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer} .gf-add-outline:hover{background:#eaffea}
+    .gf-add-outline{border:1px solid #7C9A2E;color:#556B1E;background:#fff;border-radius:9999px;padding:8px
+    24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer} .gf-add-outline:hover{background:#EBF1DA}
     .gf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
     .gf-overlay[hidden]{display:none}
     .gf-modal{background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:rgba(0,0,0,.12)
@@ -179,17 +185,19 @@
     .gf-sec-title{font-size:18px;font-weight:700;margin:20px 0 0} .gf-opt-group{border-top:1px solid
     #f0f0f0;margin-top:16px;padding-top:16px}
     .gf-opt-head{font-size:16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-    .gf-opt-head span{color:#00880d} .gf-req{font-size:14px;color:#666;margin:4px 0 8px} .gf-req
-    b{color:#00880d;font-weight:600} .gf-opt{display:flex;justify-content:space-between;align-items:center;padding:12px
+    .gf-opt-head span{color:#7C9A2E} .gf-req{font-size:14px;color:#666;margin:4px 0 8px} .gf-req
+    b{color:#7C9A2E;font-weight:600} .gf-opt{display:flex;justify-content:space-between;align-items:center;padding:12px
     0;border-bottom:1px solid #f6f6f6;font-size:15px;cursor:pointer} .gf-opt
-    input{width:22px;height:22px;accent-color:#00880d} .gf-foot{position:sticky;bottom:0;background:#fff;padding:16px 0
+    input{width:22px;height:22px;accent-color:#7C9A2E} .gf-foot{position:sticky;bottom:0;background:#fff;padding:16px 0
     20px;border-top:1px solid #f0f0f0;margin-top:16px}
     .gf-qtyrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px}
     .gf-stepper{display:flex;align-items:center;gap:12px} .gf-step{width:36px;height:36px;border-radius:50%;border:1px
     solid
-    #00880d;background:#fff;color:#00880d;font-size:20px;line-height:1;cursor:pointer;min-width:44px;min-height:44px}
+    #7C9A2E;background:#fff;color:#7C9A2E;font-size:20px;line-height:1;cursor:pointer;min-width:44px;min-height:44px}
     .gf-step:disabled{opacity:.35}
-    .gf-submit{width:100%;background:#00880d;color:#fff;border:0;border-radius:9999px;padding:14px;font-size:16px;font-weight:700;min-height:52px;cursor:pointer}
+    .gf-submit{width:100%;background:#7C9A2E;color:#fff;border:0;border-radius:9999px;padding:14px
+    24px;font-size:16px;font-weight:700;min-height:52px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .gf-submit strong{font-size:18px}
     .gf-close{position:absolute;top:12px;right:16px;border:0;background:#f0f0f0;width:36px;height:36px;border-radius:50%;cursor:pointer}
   </style>
 
@@ -201,7 +209,7 @@
           <h3 id="mName"></h3>
           <p class="gf-modal-desc" id="mDesc"></p>
           <div class="gf-modal-price">
-            <span id="mPrice"></span><s id="mOrig"></s>
+            <span id="mPrice"></span>
           </div>
           <div class="gf-sec-title">
             Sesuaikan pesanan
@@ -209,34 +217,6 @@
           <form method="post" action="/home/checkout" id="mForm">
             <input type="hidden" name="product_id" id="mId" />
             <input type="hidden" name="qty" id="mQtyInput" value="1" />
-            <div class="gf-opt-group">
-              <div class="gf-opt-head">
-                Pilih Ukuran <span>⌃</span>
-              </div>
-              <div class="gf-req">
-                <b>Wajib</b> • Pilih 1
-              </div>
-              <label class="gf-opt">
-                <span>Reguler</span><span>+0 &nbsp;<input type="radio" name="size" value="Reguler" checked /></span>
-              </label>
-              <label class="gf-opt">
-                <span>Besar</span><span>+5.000 &nbsp;<input type="radio" name="size" value="Besar" /></span>
-              </label>
-            </div>
-            <div class="gf-opt-group">
-              <div class="gf-opt-head">
-                Level Es <span>⌃</span>
-              </div>
-              <div class="gf-req">
-                <b>Wajib</b> • Pilih 1
-              </div>
-              <label class="gf-opt">
-                <span>Sedikit Es</span><span>+0 &nbsp;<input type="radio" name="ice" value="Sedikit Es" checked /></span>
-              </label>
-              <label class="gf-opt">
-                <span>Es Normal</span><span>+0 &nbsp;<input type="radio" name="ice" value="Es Normal" /></span>
-              </label>
-            </div>
             <div class="gf-foot">
               <div class="gf-qtyrow">
                 <span>Berapa banyak?</span>
@@ -250,7 +230,9 @@
                   </button>
                 </span>
               </div>
-              <button class="gf-submit" id="mSubmit" type="submit">Beli Sekarang</button>
+              <button class="gf-submit" id="mSubmit" type="submit">
+                <span>Beli Sekarang</span><strong id="mTotal"></strong>
+              </button>
             </div>
           </form>
         </div>
@@ -259,22 +241,29 @@
   </div>
 
   <script>
-    (function(){ var overlay=document.getElementById('gfOverlay'), mName=document.getElementById('mName'),
-    mDesc=document.getElementById('mDesc'), mPrice=document.getElementById('mPrice'),
-    mOrig=document.getElementById('mOrig'), mId=document.getElementById('mId'), qVal=document.getElementById('qVal'),
-    qIn=document.getElementById('mQtyInput'), submit=document.getElementById('mSubmit'), base=0, qty=1; function
-    rp(n){return 'Rp '+Number(n).toLocaleString('id-ID');} function total(){var
-    extra=document.querySelector('input[name="size"]:checked').value==='Besar'?5000:0;return (base+extra)*qty;} function
-    refresh(){mPrice.textContent=rp(base);submit.textContent='Beli Sekarang -
-    '+total().toLocaleString('id-ID');qVal.textContent=qty;qIn.value=qty;document.getElementById('qMinus').disabled=qty<=1;document.getElementById('qPlus').disabled=qty>=10;}
+    (function(){
+    var overlay=document.getElementById('gfOverlay');
+    var mName=document.getElementById('mName');
+    var mDesc=document.getElementById('mDesc');
+    var mPrice=document.getElementById('mPrice');
+    var mId=document.getElementById('mId');
+    var qVal=document.getElementById('qVal');
+    var qIn=document.getElementById('mQtyInput');
+    var mTotal=document.getElementById('mTotal');
+    var base=0, qty=1;
+    function rp(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
+    function total(){return base*qty;}
+    function refresh(){
+    mPrice.textContent=rp(base);mTotal.textContent=rp(total());
+    qVal.textContent=qty;qIn.value=qty;
+    document.getElementById('qMinus').disabled=qty<=1;
+    document.getElementById('qPlus').disabled=qty>=10;}
     document.querySelectorAll('.js-open-modal').forEach(function(b){b.addEventListener('click',function(){
     base=parseInt(b.dataset.price,10)||0;mId.value=b.dataset.id;mName.textContent=b.dataset.name;
-    mDesc.textContent=b.dataset.desc||'Dibuat segar dengan bahan pilihan.'; mOrig.textContent='Rp
-    '+(parseInt(b.dataset.original,10)||0).toLocaleString('id-ID');
-    qty=1;document.querySelector('input[name="size"][value="Reguler"]').checked=true;
-    document.querySelector('input[name="ice"][value="Sedikit Es"]').checked=true;
+    mDesc.textContent=b.dataset.desc||'Dibuat segar dengan bahan pilihan.';
+    qty=1;
     refresh();overlay.hidden=false;document.body.style.overflow='hidden'; });});
-    document.querySelectorAll('input[name="size"]').forEach(function(r){r.addEventListener('change',refresh);});
+    document.getElementById('qMinus').addEventListener('click',function(){if(qty>1){qty--;refresh();}});
     document.getElementById('qMinus').addEventListener('click',function(){if(qty>1){qty--;refresh();}});
     document.getElementById('qPlus').addEventListener('click',function(){if(qty<10){qty++;refresh();}});
     document.getElementById('gfClose').addEventListener('click',function(){overlay.hidden=true;document.body.style.overflow='';});

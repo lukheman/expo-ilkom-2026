@@ -26,14 +26,27 @@
             </em> • <strong class="price">Rp {{ o.total|number_format(0, ',', '.') }}</strong>
           </div>
           <div class="mt-1">
-            Status: <span class="badge bg-warning text-dark">{{ o.status }}</span>
+            Status: <span class="badge bg-warning text-white">{{ o.status }}</span>
           </div>
         </div>
       {% endfor %}
       {% if orders[0].payment_method == 'QRIS' %}
-        <div class="alert alert-info">
-          <i class="bi bi-qr-code-scan"></i> Scan QRIS di stan {{ orders[0].booth }}, penjual akan menandai lunas.
-        </div>
+        {% if orders[0].qris_image %}
+          <div class="card p-3 mb-3 text-center">
+            <strong>Scan QRIS {{ orders[0].store_name|e }}</strong>
+            <div class="my-2">
+              <img
+                src="{{ orders[0].qris_image|e }}"
+                alt="QRIS {{ orders[0].store_name|e }}"
+                style="max-width:280px;width:100%;border-radius:12px"
+              />
+            </div>
+            <div>
+              <strong class="price">Rp {{ orders[0].total|number_format(0, ',', '.') }}</strong>
+              <small class="text-secondary"> • {{ orders[0].pickup_code }}</small>
+            </div>
+          </div>
+        {% endif %}
       {% else %}
         <div class="alert alert-info">
           <i class="bi bi-cash"></i> Siapkan uang tunai saat ambil di stan {{ orders[0].booth }}.
@@ -49,7 +62,7 @@
           </li>
         </ol>
       </div>
-      <a href="/home/track?kode={{ group|e }}" class="btn btn-outline-secondary w-100 mb-2">Pantau Status Pesanan</a>
+      <a href="/home/track?kode={{ group|e }}" class="btn btn-secondary w-100 mb-2">Pantau Status Pesanan</a>
       <a href="/" class="btn btn-primary w-100">Pesan Lagi</a>
     {% endif %}
   </div>
