@@ -25,6 +25,7 @@ class UserController extends Controller
                 'name' => $_POST['name'],
                 'email' => $_POST['email'],
             ]);
+            $this->toast('User berhasil ditambahkan.');
         }
         header('Location: /user');
     }
@@ -47,6 +48,7 @@ class UserController extends Controller
                 'name' => $_POST['name'],
                 'email' => $_POST['email'],
             ]);
+            $this->toast('User berhasil diubah.');
         }
         header('Location: /user');
     }
@@ -56,6 +58,7 @@ class UserController extends Controller
         $user = User::find($id);
         if ($user) {
             $user->delete();
+            $this->toast('User berhasil dihapus.');
         }
         header('Location: /user');
     }

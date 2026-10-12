@@ -40,35 +40,56 @@
             </td>
             <td>
               {% if u.status == 'pending' %}
-                <span class="badge bg-warning text-dark">Menunggu</span>
+                <a
+                  class="btn btn-sm btn-warning"
+                  href="/admin/toggleSeller/{{ u.id }}"
+                  title="Klik untuk menyetujui"
+                  onclick="return confirm('Setujui penjual {{ u.name|e('js') }}?')"
+                >
+                  <i class="bi bi-hourglass-split"></i> Menunggu
+                </a>
               {% elseif u.status == 'active' %}
-                <span class="badge bg-success">Aktif</span>
+                <a
+                  class="btn btn-sm btn-success"
+                  href="/admin/toggleSeller/{{ u.id }}"
+                  title="Klik untuk menonaktifkan"
+                >
+                  <i class="bi bi-check-circle"></i> Aktif
+                </a>
               {% elseif u.status == 'rejected' %}
-                <span class="badge bg-danger">Ditolak</span>
+                <a
+                  class="btn btn-sm btn-danger"
+                  href="/admin/toggleSeller/{{ u.id }}"
+                  title="Klik untuk mengaktifkan"
+                >
+                  <i class="bi bi-x-circle"></i> Ditolak
+                </a>
               {% else %}
-                <span class="badge bg-secondary">{{ u.status }}</span>
+                <a
+                  class="btn btn-sm btn-secondary"
+                  href="/admin/toggleSeller/{{ u.id }}"
+                  title="Klik untuk mengaktifkan"
+                >
+                  <i class="bi bi-pause-circle"></i> {{ u.status }}
+                </a>
               {% endif %}
             </td>
             <td>
               <div class="table-actions">
                 {% if u.status == 'pending' %}
-                  <a class="btn btn-sm btn-success" href="/admin/approve/{{ u.id }}">
-                    <i class="bi bi-check-lg"></i> Setujui
-                  </a><a class="btn btn-sm btn-outline-danger" href="/admin/reject/{{ u.id }}">
+                  <a class="btn btn-sm btn-danger" href="/admin/reject/{{ u.id }}">
                     <i class="bi bi-x-lg"></i> Tolak
                   </a>
                 {% endif %}
                 <button
                   type="button"
-                  class="btn btn-sm btn-primary"
+                  class="btn btn-sm btn-warning"
                   data-bs-toggle="modal"
                   data-bs-target="#editModal{{ u.id }}"
                 >
                   <i class="bi bi-pencil"></i> Ubah
-                </button><a class="btn btn-sm btn-outline-secondary" href="/admin/toggleSeller/{{ u.id }}">
-                  <i class="bi bi-power"></i> Aktif/Nonaktif
-                </a><a
-                  class="btn btn-sm btn-outline-danger"
+                </button><a
+                  class="btn btn-sm btn-danger"
                   href="/admin/delSeller/{{ u.id }}"
                   onclick="return confirm('Hapus penjual {{ u.name|e('js') }} beserta toko & produknya?')"
                 >

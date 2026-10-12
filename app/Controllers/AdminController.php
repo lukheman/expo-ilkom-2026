@@ -15,7 +15,7 @@ class AdminController extends Controller
     {
         $u = isset($_SESSION['user']) ? User::find($_SESSION['user']) : null;
         if (! $u || $u->role !== 'admin' || $u->status !== 'active') {
-            header('Location: /auth/login');
+            header('Location: /login');
 
             return null;
         }
@@ -73,6 +73,7 @@ class AdminController extends Controller
         if ($u) {
             $u->update(['status' => 'active']);
             Store::where('user_id', $u->id)->update(['approved' => true]);
+            $this->toast('Penjual berhasil disetujui.');
         }
         header('Location: /admin/sellers');
     }
@@ -86,6 +87,7 @@ class AdminController extends Controller
         if ($u) {
             $u->update(['status' => 'rejected']);
             Store::where('user_id', $u->id)->update(['approved' => false]);
+            $this->toast('Penjual berhasil ditolak.');
         }
         header('Location: /admin/sellers');
     }
@@ -112,6 +114,9 @@ class AdminController extends Controller
                 'name' => $storeName !== '' ? $storeName : 'Stan '.$name,
                 'approved' => true,
             ]);
+            $this->toast('Penjual berhasil ditambahkan.');
+        } else {
+            $this->toast('Gagal menambahkan. Email sudah terdaftar atau data tidak valid.', 'danger');
         }
         header('Location: /admin/sellers');
     }
@@ -123,6 +128,7 @@ class AdminController extends Controller
         }
         $u = User::where('id', (int) $id)->where('role', 'seller')->first();
         if (! $u) {
+            $this->toast('Penjual tidak ditemukan.', 'danger');
             header('Location: /admin/sellers');
 
             return;
@@ -154,6 +160,7 @@ class AdminController extends Controller
             $storeData['user_id'] = $u->id;
             Store::create($storeData);
         }
+        $this->toast('Penjual berhasil diubah.');
         header('Location: /admin/sellers');
     }
 
@@ -167,6 +174,7 @@ class AdminController extends Controller
             $new = $u->status === 'active' ? 'nonactive' : 'active';
             $u->update(['status' => $new]);
             Store::where('user_id', $u->id)->update(['approved' => $new === 'active']);
+            $this->toast($new === 'active' ? 'Penjual berhasil diaktifkan.' : 'Penjual berhasil dinonaktifkan.');
         }
         header('Location: /admin/sellers');
     }
@@ -189,6 +197,7 @@ class AdminController extends Controller
                 $store->delete();
             }
             $u->delete();
+            $this->toast('Penjual beserta toko & produknya berhasil dihapus.');
         }
         header('Location: /admin/sellers');
     }
@@ -208,7 +217,9 @@ class AdminController extends Controller
         }
         $u = User::find((int) $id);
         if ($u && $u->role !== 'admin') {
-            $u->update(['status' => $u->status === 'active' ? 'nonactive' : 'active']);
+            $new = $u->status === 'active' ? 'nonactive' : 'active';
+            $u->update(['status' => $new]);
+            $this->toast($new === 'active' ? 'Pengguna berhasil diaktifkan.' : 'Pengguna berhasil dinonaktifkan.');
         }
         header('Location: /admin/users');
     }
@@ -221,7 +232,7 @@ class AdminController extends Controller
         $name = substr(trim($_POST['name'] ?? ''), 0, 100);
         $email = substr(trim($_POST['email'] ?? ''), 0, 100);
         $password = $_POST['password'] ?? '';
-        $role = in_array($_POST['role'] ?? 'buyer', ['admin', 'seller', 'buyer'], true) ? $_POST['role'] : 'buyer';
+        $role = in_array($_POST['role'] ?? 'seller', ['admin', 'seller'], true) ? $_POST['role'] : 'seller';
         $status = in_array($_POST['status'] ?? 'active', ['active', 'nonactive', 'pending'], true) ? $_POST['status'] : 'active';
         if ($name !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && $password !== '' && ! User::where('email', $email)->exists()) {
             User::create([
@@ -231,6 +242,9 @@ class AdminController extends Controller
                 'role' => $role,
                 'status' => $status,
             ]);
+            $this->toast('Pengguna berhasil ditambahkan.');
+        } else {
+            $this->toast('Gagal menambahkan. Email sudah terdaftar atau data tidak valid.', 'danger');
         }
         header('Location: /admin/users');
     }
@@ -243,6 +257,7 @@ class AdminController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && trim($_POST['name'] ?? '') !== '') {
             $name = substr(trim($_POST['name']), 0, 50);
             Category::firstOrCreate(['name' => $name], ['slug' => strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name))]);
+            $this->toast('Kategori berhasil ditambahkan.');
             header('Location: /admin/categories');
 
             return;
@@ -257,6 +272,9 @@ class AdminController extends Controller
         }
         if (! Product::where('category_id', (int) $id)->exists()) {
             Category::where('id', (int) $id)->delete();
+            $this->toast('Kategori berhasil dihapus.');
+        } else {
+            $this->toast('Kategori masih dipakai produk, tidak bisa dihapus.', 'danger');
         }
         header('Location: /admin/categories');
     }
@@ -301,6 +319,9 @@ class AdminController extends Controller
                 'image' => substr(trim($_POST['image'] ?? ''), 0, 255) ?: null,
                 'active' => true,
             ]);
+            $this->toast('Produk berhasil ditambahkan.');
+        } else {
+            $this->toast('Gagal menambahkan. Stan atau nama produk tidak valid.', 'danger');
         }
         header('Location: /admin/products');
     }
@@ -313,6 +334,7 @@ class AdminController extends Controller
         $p = Product::find((int) $id);
         if ($p) {
             $p->update(['active' => ! $p->active]);
+            $this->toast($p->active ? 'Produk berhasil diaktifkan.' : 'Produk berhasil dinonaktifkan.');
         }
         header('Location: /admin/products');
     }

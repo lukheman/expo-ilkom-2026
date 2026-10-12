@@ -20,7 +20,6 @@
           <th>Email</th>
           <th>Peran</th>
           <th>Status</th>
-          <th class="no-sort">Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -30,19 +29,40 @@
             <td>{{ u.email|e }}</td>
             <td>
               <span
-                class="badge {% if u.role == 'admin' %}bg-dark{% elseif u.role == 'seller' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}"
+                class="badge {% if u.role == 'admin' %}bg-dark{% elseif u.role == 'seller' %}bg-warning text-white{% else %}bg-info text-white{% endif %}"
               >
-                {{ u.role }}
+                {{ u.role == 'seller' ? 'penjual' : u.role }}
               </span>
             </td>
-            <td>{{ u.status }}</td>
             <td>
               {% if u.role != 'admin' %}
-                <a class="btn btn-sm btn-outline-secondary" href="/admin/toggleUser/{{ u.id }}">
-                  <i class="bi bi-power"></i> Aktif/Nonaktif
-                </a>
+                {% if u.status == 'active' %}
+                  <a
+                    class="btn btn-sm btn-success"
+                    href="/admin/toggleUser/{{ u.id }}"
+                    title="Klik untuk menonaktifkan"
+                  >
+                    <i class="bi bi-check-circle"></i> active
+                  </a>
+                {% elseif u.status == 'pending' %}
+                  <a
+                    class="btn btn-sm btn-warning"
+                    href="/admin/toggleUser/{{ u.id }}"
+                    title="Klik untuk mengaktifkan"
+                  >
+                    <i class="bi bi-hourglass-split"></i> pending
+                  </a>
+                {% else %}
+                  <a
+                    class="btn btn-sm btn-secondary"
+                    href="/admin/toggleUser/{{ u.id }}"
+                    title="Klik untuk mengaktifkan"
+                  >
+                    <i class="bi bi-pause-circle"></i> {{ u.status }}
+                  </a>
+                {% endif %}
               {% else %}
-                <span class="text-secondary">—</span>
+                <span class="text-secondary">{{ u.status }}</span>
               {% endif %}
             </td>
           </tr>
@@ -76,8 +96,7 @@
             <div class="col-6">
               <label class="form-label">Peran</label>
               <select class="form-select" name="role">
-                <option value="buyer">buyer</option>
-                <option value="seller">seller</option>
+                <option value="seller">penjual</option>
                 <option value="admin">admin</option>
               </select>
             </div>

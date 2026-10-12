@@ -26,10 +26,10 @@
             <td>{{ user.email }}</td>
             <td>
               <div class="table-actions">
-                <a href="/user/edit/{{ user.id }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+                <a href="/user/edit/{{ user.id }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Edit</a>
                 <a
                   href="/user/delete/{{ user.id }}"
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm btn-danger"
                   onclick="return confirm('Are you sure?')"
                 >
                   <i class="bi bi-trash"></i> Delete
@@ -66,7 +66,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Save</button>
           </div>
         </form>

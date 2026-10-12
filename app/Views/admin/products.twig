@@ -21,7 +21,6 @@
           <th>Harga</th>
           <th>Stok</th>
           <th>Status</th>
-          <th class="no-sort">Aksi</th>
         </tr>
       </thead>
       <tbody>
@@ -39,20 +38,27 @@
             </td>
             <td>
               {% if p.active %}
-                <span class="badge bg-success">Aktif</span>
+                <a
+                  class="btn btn-sm btn-success"
+                  href="/admin/toggleProduct/{{ p.id }}"
+                  title="Klik untuk menonaktifkan"
+                >
+                  <i class="bi bi-check-circle"></i> Aktif
+                </a>
               {% else %}
-                <span class="badge bg-secondary">Nonaktif</span>
+                <a
+                  class="btn btn-sm btn-secondary"
+                  href="/admin/toggleProduct/{{ p.id }}"
+                  title="Klik untuk mengaktifkan"
+                >
+                  <i class="bi bi-pause-circle"></i> Nonaktif
+                </a>
               {% endif %}
-            </td>
-            <td>
-              <a class="btn btn-sm btn-outline-secondary" href="/admin/toggleProduct/{{ p.id }}">
-                <i class="bi bi-power"></i> Aktif/Nonaktif
-              </a>
             </td>
           </tr>
         {% else %}
           <tr>
-            <td colspan="6" class="text-secondary">Belum ada produk.</td>
+            <td colspan="5" class="text-secondary">Belum ada produk.</td>
           </tr>
         {% endfor %}
       </tbody>
