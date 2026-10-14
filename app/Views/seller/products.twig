@@ -34,20 +34,24 @@
               {% endif %}
             </td>
             <td>
-              {% if p.active %}
-                <span class="badge bg-success">Aktif</span>
-              {% else %}
-                <span class="badge bg-secondary">Nonaktif</span>
-              {% endif %}
+              <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                <input
+                  class="form-check-input js-status-toggle mt-0"
+                  type="checkbox"
+                  role="switch"
+                  data-url="/seller/toggle/{{ p.id }}?format=json"
+                  data-fallback="/seller/toggle/{{ p.id }}"
+                  data-label="statusLabel{{ p.id }}"
+                  {{ p.active ? 'checked' : '' }}
+                />
+                <label class="form-label mb-0 small" id="statusLabel{{ p.id }}">
+                  {{ p.active ? 'Aktif' : 'Nonaktif' }}
+                </label>
+              </div>
             </td>
             <td>
               <div class="table-actions">
                 <a class="btn btn-sm btn-warning" href="/seller/edit/{{ p.id }}"><i class="bi bi-pencil"></i> Ubah</a><a
-                  class="btn btn-sm btn-secondary"
-                  href="/seller/toggle/{{ p.id }}"
-                >
-                  <i class="bi bi-power"></i> Aktif/Nonaktif
-                </a><a
                   class="btn btn-sm btn-danger"
                   href="/seller/delete/{{ p.id }}"
                   onclick="return confirm('Hapus produk ini?')"
@@ -65,4 +69,17 @@
       </tbody>
     </table>
   </div>
+  <script>
+    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
+    sw.addEventListener('change',function(){
+    var want=sw.checked, label=document.getElementById(sw.dataset.label);
+    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
+    sw.disabled=true;
+    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok){if(label){label.textContent=d.label;}}
+    else{sw.checked=!want;}
+    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
+    });
+    });
+  </script>
 {% endblock %}

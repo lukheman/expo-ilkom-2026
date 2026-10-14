@@ -272,6 +272,12 @@ class SellerController extends Controller
         $p = Product::where('id', (int) $id)->where('store_id', $s->id)->first();
         if ($p) {
             $p->update(['active' => ! $p->active]);
+            if (($_GET['format'] ?? '') === 'json') {
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => true, 'active' => (bool) $p->active, 'label' => $p->active ? 'Aktif' : 'Nonaktif']);
+
+                return;
+            }
             $this->toast($p->active ? 'Produk berhasil diaktifkan.' : 'Produk berhasil dinonaktifkan.');
         }
         header('Location: /seller/products');
