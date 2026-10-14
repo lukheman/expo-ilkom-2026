@@ -39,40 +39,19 @@
               {% endif %}
             </td>
             <td>
-              {% if u.status == 'pending' %}
-                <a
-                  class="btn btn-sm btn-warning"
-                  href="/admin/toggleSeller/{{ u.id }}"
-                  title="Klik untuk menyetujui"
-                  onclick="return confirm('Setujui penjual {{ u.name|e('js') }}?')"
-                >
-                  <i class="bi bi-hourglass-split"></i> Menunggu
-                </a>
-              {% elseif u.status == 'active' %}
-                <a
-                  class="btn btn-sm btn-success"
-                  href="/admin/toggleSeller/{{ u.id }}"
-                  title="Klik untuk menonaktifkan"
-                >
-                  <i class="bi bi-check-circle"></i> Aktif
-                </a>
-              {% elseif u.status == 'rejected' %}
-                <a
-                  class="btn btn-sm btn-danger"
-                  href="/admin/toggleSeller/{{ u.id }}"
-                  title="Klik untuk mengaktifkan"
-                >
-                  <i class="bi bi-x-circle"></i> Ditolak
-                </a>
-              {% else %}
-                <a
-                  class="btn btn-sm btn-secondary"
-                  href="/admin/toggleSeller/{{ u.id }}"
-                  title="Klik untuk mengaktifkan"
-                >
-                  <i class="bi bi-pause-circle"></i> {{ u.status }}
-                </a>
-              {% endif %}
+              <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                <input
+                  class="form-check-input js-status-toggle mt-0"
+                  type="checkbox"
+                  role="switch"
+                  data-url="/admin/toggleSeller/{{ u.id }}?format=json"
+                  data-label="statusLabel{{ u.id }}"
+                  {{ u.status == 'active' ? 'checked' : '' }}
+                />
+                <label class="form-label mb-0 small" id="statusLabel{{ u.id }}">
+                  {{ u.status == 'pending' ? 'Menunggu' : (u.status == 'active' ? 'Aktif' : (u.status == 'rejected' ? 'Ditolak' : u.status)) }}
+                </label>
+              </div>
             </td>
             <td>
               <div class="table-actions">
@@ -216,4 +195,17 @@
       </div>
     </div>
   {% endfor %}
+  <script>
+    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
+    sw.addEventListener('change',function(){
+    var want=sw.checked, label=document.getElementById(sw.dataset.label);
+    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
+    sw.disabled=true;
+    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok){if(label){label.textContent=d.label;}}
+    else{sw.checked=!want;}
+    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
+    });
+    });
+  </script>
 {% endblock %}

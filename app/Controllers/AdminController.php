@@ -174,9 +174,20 @@ class AdminController extends Controller
             $new = $u->status === 'active' ? 'nonactive' : 'active';
             $u->update(['status' => $new]);
             Store::where('user_id', $u->id)->update(['approved' => $new === 'active']);
+            if (($_GET['format'] ?? '') === 'json') {
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => true, 'status' => $new, 'label' => $this->sellerStatusLabel($new)]);
+
+                return;
+            }
             $this->toast($new === 'active' ? 'Penjual berhasil diaktifkan.' : 'Penjual berhasil dinonaktifkan.');
         }
         header('Location: /admin/sellers');
+    }
+
+    private function sellerStatusLabel($status)
+    {
+        return ['pending' => 'Menunggu', 'active' => 'Aktif', 'rejected' => 'Ditolak'][$status] ?? $status;
     }
 
     public function delSeller($id)
@@ -219,6 +230,15 @@ class AdminController extends Controller
         if ($u && $u->role !== 'admin') {
             $new = $u->status === 'active' ? 'nonactive' : 'active';
             $u->update(['status' => $new]);
+            if ($u->role === 'seller') {
+                Store::where('user_id', $u->id)->update(['approved' => $new === 'active']);
+            }
+            if (($_GET['format'] ?? '') === 'json') {
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => true, 'status' => $new, 'label' => $new]);
+
+                return;
+            }
             $this->toast($new === 'active' ? 'Pengguna berhasil diaktifkan.' : 'Pengguna berhasil dinonaktifkan.');
         }
         header('Location: /admin/users');
@@ -334,6 +354,12 @@ class AdminController extends Controller
         $p = Product::find((int) $id);
         if ($p) {
             $p->update(['active' => ! $p->active]);
+            if (($_GET['format'] ?? '') === 'json') {
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => true, 'active' => (bool) $p->active, 'label' => $p->active ? 'Aktif' : 'Nonaktif']);
+
+                return;
+            }
             $this->toast($p->active ? 'Produk berhasil diaktifkan.' : 'Produk berhasil dinonaktifkan.');
         }
         header('Location: /admin/products');

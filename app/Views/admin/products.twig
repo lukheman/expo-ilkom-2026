@@ -37,23 +37,19 @@
               {% endif %}
             </td>
             <td>
-              {% if p.active %}
-                <a
-                  class="btn btn-sm btn-success"
-                  href="/admin/toggleProduct/{{ p.id }}"
-                  title="Klik untuk menonaktifkan"
-                >
-                  <i class="bi bi-check-circle"></i> Aktif
-                </a>
-              {% else %}
-                <a
-                  class="btn btn-sm btn-secondary"
-                  href="/admin/toggleProduct/{{ p.id }}"
-                  title="Klik untuk mengaktifkan"
-                >
-                  <i class="bi bi-pause-circle"></i> Nonaktif
-                </a>
-              {% endif %}
+              <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                <input
+                  class="form-check-input js-status-toggle mt-0"
+                  type="checkbox"
+                  role="switch"
+                  data-url="/admin/toggleProduct/{{ p.id }}?format=json"
+                  data-label="statusLabel{{ p.id }}"
+                  {{ p.active ? 'checked' : '' }}
+                />
+                <label class="form-label mb-0 small" id="statusLabel{{ p.id }}">
+                  {{ p.active ? 'Aktif' : 'Nonaktif' }}
+                </label>
+              </div>
             </td>
           </tr>
         {% else %}
@@ -122,4 +118,17 @@
       </div>
     </div>
   </div>
+  <script>
+    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
+    sw.addEventListener('change',function(){
+    var want=sw.checked, label=document.getElementById(sw.dataset.label);
+    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
+    sw.disabled=true;
+    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok){if(label){label.textContent=d.label;}}
+    else{sw.checked=!want;}
+    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
+    });
+    });
+  </script>
 {% endblock %}
