@@ -74,18 +74,26 @@
             <div class="col-md-6">
               <label class="form-label">Stan *</label>
               <select class="form-select" name="store_id" required>
-                <option value="">— Pilih stan —</option>
+                <option value="">
+                  — Pilih stan —
+                </option>
                 {% for s in stores %}
-                  <option value="{{ s.id }}">{{ s.name }}</option>
+                  <option value="{{ s.id }}">
+                    {{ s.name }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
             <div class="col-md-6">
               <label class="form-label">Kategori</label>
               <select class="form-select" name="category_id">
-                <option value="">— Tanpa kategori —</option>
+                <option value="">
+                  — Tanpa kategori —
+                </option>
                 {% for c in categories %}
-                  <option value="{{ c.id }}">{{ c.name }}</option>
+                  <option value="{{ c.id }}">
+                    {{ c.name }}
+                  </option>
                 {% endfor %}
               </select>
             </div>
@@ -119,16 +127,11 @@
     </div>
   </div>
   <script>
-    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
-    sw.addEventListener('change',function(){
-    var want=sw.checked, label=document.getElementById(sw.dataset.label);
-    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
-    sw.disabled=true;
-    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
-    if(d&&d.ok){if(label){label.textContent=d.label;}}
-    else{sw.checked=!want;}
-    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
-    });
-    });
+    document.querySelectorAll('.js-status-toggle').forEach(function(sw){ sw.addEventListener('change',function(){ var
+    want=sw.checked, label=document.getElementById(sw.dataset.label); if(typeof
+    fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
+    sw.disabled=true; fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok){if(label){label.textContent=d.label;}} else{sw.checked=!want;}
+    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;}); }); });
   </script>
 {% endblock %}

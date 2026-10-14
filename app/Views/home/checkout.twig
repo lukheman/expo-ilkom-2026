@@ -25,7 +25,9 @@
         <div class="card p-3 mb-3">
           <div class="d-flex justify-content-between align-items-center">
             <strong><i class="bi bi-shop"></i> {{ g.store ? g.store.name : 'Stan' }}</strong>
-            <span class="badge bg-secondary">Stan {{ g.store and g.store.booth_number ? g.store.booth_number : '—' }}</span>
+            <span class="badge bg-secondary">
+              Stan {{ g.store and g.store.booth_number ? g.store.booth_number : '—' }}
+            </span>
           </div>
           {% for p in g.items %}
             <div class="d-flex gap-2 py-2 border-bottom align-items-center">
@@ -36,9 +38,7 @@
                   style="width:48px;height:48px;object-fit:cover;border-radius:10px;flex:0 0 auto"
                 />
               {% endif %}
-              <span class="flex-fill">
-                {{ p.qty }}× {{ p.name }}
-              </span>
+              <span class="flex-fill">{{ p.qty }}× {{ p.name }}</span>
               <strong>Rp {{ p.subtotal|number_format(0, ',', '.') }}</strong>
             </div>
           {% endfor %}
@@ -112,9 +112,8 @@
             {% endif %}
           {% endfor %}
           <script>
-            function syncQris(){var c=document.querySelector('input[name="payment"]:checked');
-            var show=c&&c.value==='QRIS';
-            document.querySelectorAll('.js-qris-box').forEach(function(b){b.hidden=!show;});}
+            function syncQris(){var c=document.querySelector('input[name="payment"]:checked'); var
+            show=c&&c.value==='QRIS'; document.querySelectorAll('.js-qris-box').forEach(function(b){b.hidden=!show;});}
             document.querySelectorAll('input[name="payment"]').forEach(function(r){r.addEventListener('change',syncQris);});
             document.addEventListener('DOMContentLoaded',syncQris);syncQris();
           </script>

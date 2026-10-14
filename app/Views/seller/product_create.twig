@@ -9,7 +9,9 @@
   </nav>
   <h1 class="gf-h2">Tambah Produk</h1>
   {% if uploadMsg %}
-    <div class="alert alert-danger">{{ uploadMsg }}</div>
+    <div class="alert alert-danger">
+      {{ uploadMsg }}
+    </div>
   {% endif %}
   <div class="card p-4">
     <form method="post" action="/seller/save" enctype="multipart/form-data" class="row g-2">
@@ -35,11 +37,7 @@
         </select>
       </div>
       <div class="col-12">
-        <label class="form-label">Deskripsi</label><input
-          class="form-control"
-          name="description"
-          maxlength="500"
-        />
+        <label class="form-label">Deskripsi</label><input class="form-control" name="description" maxlength="500" />
       </div>
       <div class="col-6">
         <label class="form-label">Harga (Rp) *</label><input
@@ -60,14 +58,13 @@
         />
       </div>
       <div class="col-12">
-        <label class="form-label">
-          Foto produk <small class="text-secondary">(JPG/PNG/WebP, maks 2MB)</small>
-        </label><input
+        <label class="form-label">Foto produk <small class="text-secondary">(JPG/PNG/WebP, maks 2MB)</small></label><input
           class="form-control"
           type="file"
           name="photo"
           accept="image/jpeg,image/png,image/webp,image/gif"
-        /><input class="form-control mt-2" name="image" placeholder="atau tempel URL foto" maxlength="255" />
+        />
+        <input class="form-control mt-2" name="image" placeholder="atau tempel URL foto" maxlength="255" />
       </div>
       <div class="col-12 d-flex gap-2">
         <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan produk</button><a class="btn btn-secondary" href="/seller/products">Batal</a>

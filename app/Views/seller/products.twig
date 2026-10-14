@@ -51,13 +51,11 @@
             </td>
             <td>
               <div class="table-actions">
-                <a class="btn btn-sm btn-warning" href="/seller/edit/{{ p.id }}"><i class="bi bi-pencil"></i> Ubah</a><a
-                  class="btn btn-sm btn-danger"
-                  href="/seller/delete/{{ p.id }}"
-                  onclick="return confirm('Hapus produk ini?')"
-                >
-                  <i class="bi bi-trash"></i> Hapus
-                </a>
+                <a class="btn btn-sm btn-warning" href="/seller/edit/{{ p.id }}"><i class="bi bi-pencil"></i> Ubah</a><a class="btn btn-sm btn-danger" href="/seller/delete/{{ p.id }}" onclick="return confirm('Hapus produk ini?')"><i
+                    class="bi bi-trash"
+                  >
+
+                  </i> Hapus</a>
               </div>
             </td>
           </tr>
@@ -70,16 +68,11 @@
     </table>
   </div>
   <script>
-    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
-    sw.addEventListener('change',function(){
-    var want=sw.checked, label=document.getElementById(sw.dataset.label);
-    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
-    sw.disabled=true;
-    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
-    if(d&&d.ok){if(label){label.textContent=d.label;}}
-    else{sw.checked=!want;}
-    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
-    });
-    });
+    document.querySelectorAll('.js-status-toggle').forEach(function(sw){ sw.addEventListener('change',function(){ var
+    want=sw.checked, label=document.getElementById(sw.dataset.label); if(typeof
+    fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
+    sw.disabled=true; fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok){if(label){label.textContent=d.label;}} else{sw.checked=!want;}
+    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;}); }); });
   </script>
 {% endblock %}

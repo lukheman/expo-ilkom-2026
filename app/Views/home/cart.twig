@@ -22,13 +22,17 @@
                   src="{{ g.store.photo|e }}"
                   alt=""
                   style="width:32px;height:32px;object-fit:cover;border-radius:50%;vertical-align:middle"
+                  loading="lazy"
+                  decoding="async"
                 />
               {% else %}
                 <i class="bi bi-shop"></i>
               {% endif %}
               {{ g.store ? g.store.name : 'Stan' }}
             </strong>
-            <span class="badge bg-secondary">Stan {{ g.store and g.store.booth_number ? g.store.booth_number : '—' }}</span>
+            <span class="badge bg-secondary">
+              Stan {{ g.store and g.store.booth_number ? g.store.booth_number : '—' }}
+            </span>
           </div>
           {% for p in g.items %}
             <div class="d-flex gap-3 py-3 border-bottom align-items-start">
@@ -37,10 +41,14 @@
                   src="{{ p.image|e }}"
                   alt="{{ p.name|e }}"
                   style="width:56px;height:56px;object-fit:cover;border-radius:12px;flex:0 0 auto"
+                  loading="lazy"
+                  decoding="async"
                 />
               {% endif %}
               <div class="flex-fill">
-                <div class="fw-bold">{{ p.name }}</div>
+                <div class="fw-bold">
+                  {{ p.name }}
+                </div>
                 <small class="text-secondary">Rp {{ p.price|number_format(0, ',', '.') }}</small>
                 <div class="d-flex align-items-center justify-content-between mt-2">
                   <span class="d-inline-flex align-items-center gap-2">

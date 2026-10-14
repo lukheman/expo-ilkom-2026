@@ -9,7 +9,9 @@
   </nav>
   <h1 class="gf-h2">Ubah Produk</h1>
   {% if uploadMsg %}
-    <div class="alert alert-danger">{{ uploadMsg }}</div>
+    <div class="alert alert-danger">
+      {{ uploadMsg }}
+    </div>
   {% endif %}
   <div class="card p-4">
     <form method="post" action="/seller/update/{{ p.id }}" enctype="multipart/form-data" class="row g-2">

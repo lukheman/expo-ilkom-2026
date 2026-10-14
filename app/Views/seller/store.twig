@@ -8,7 +8,9 @@
   </nav>
   <h1 class="gf-h2"><i class="bi bi-gear"></i> Profil Toko</h1>
   {% if uploadMsg %}
-    <div class="alert alert-danger">{{ uploadMsg }}</div>
+    <div class="alert alert-danger">
+      {{ uploadMsg }}
+    </div>
   {% endif %}
   <div class="card p-4">
     <form method="post" action="/seller/updateStore" enctype="multipart/form-data" class="row g-2">
@@ -36,7 +38,9 @@
         </textarea>
       </div>
       <div class="col-12">
-        <label class="form-label">Foto profil toko <small class="text-secondary">(JPG/PNG/WebP, maks 2MB)</small></label>
+        <label class="form-label">
+          Foto profil toko <small class="text-secondary">(JPG/PNG/WebP, maks 2MB)</small>
+        </label>
         {% if store and store.photo %}
           <div class="mb-2">
             <img
@@ -46,13 +50,10 @@
             />
           </div>
         {% endif %}
-        <input
-          class="form-control"
-          type="file"
-          name="photo"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-        />
-        <div class="form-text">Upload baru untuk mengganti. Kosongkan jika tidak diganti.</div>
+        <input class="form-control" type="file" name="photo" accept="image/jpeg,image/png,image/webp,image/gif" />
+        <div class="form-text">
+          Upload baru untuk mengganti. Kosongkan jika tidak diganti.
+        </div>
       </div>
       <div class="col-12">
         <label class="form-label">QRIS pembayaran <small class="text-secondary">(JPG/PNG/WebP, maks 2MB)</small></label>
@@ -65,13 +66,10 @@
             />
           </div>
         {% endif %}
-        <input
-          class="form-control"
-          type="file"
-          name="qris"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-        />
-        <div class="form-text">Upload baru untuk mengganti. Kosongkan jika tidak diganti.</div>
+        <input class="form-control" type="file" name="qris" accept="image/jpeg,image/png,image/webp,image/gif" />
+        <div class="form-text">
+          Upload baru untuk mengganti. Kosongkan jika tidak diganti.
+        </div>
       </div>
       <div class="col-12">
         <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan profil</button>

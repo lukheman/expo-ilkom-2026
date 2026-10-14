@@ -8,9 +8,8 @@
   </nav>
   <h1 class="gf-h2">Semua Pesanan</h1>
   <div class="d-flex gap-2 flex-wrap mb-3 filter-bar">
-    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-secondary{% endif %}" href="/admin/orders">
-      Semua
-    </a>{% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
+    <a class="btn btn-sm {% if status == '' %}btn-dark{% else %}btn-secondary{% endif %}" href="/admin/orders">Semua</a>
+    {% for s in ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'] %}
       <a
         class="btn btn-sm {% if status == s %}btn-dark{% else %}btn-secondary{% endif %}"
         href="/admin/orders?status={{ s }}"
