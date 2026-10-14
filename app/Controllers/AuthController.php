@@ -10,13 +10,13 @@ class AuthController extends Controller
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $u = User::where('email', $_POST['email'])->first();
+            $u = User::where('username', trim($_POST['username'] ?? ''))->first();
             if ($u && password_verify($_POST['password'], $u->password)) {
                 $_SESSION['user'] = $u->id;
                 header('Location: '.($u->role === 'admin' ? '/admin' : ($u->role === 'seller' ? '/seller' : '/')));
 
                 return;
-            } $error = 'Email atau password salah.';
+            } $error = 'Username atau password salah.';
         } $this->view('auth/login', ['title' => 'Masuk', 'error' => $error ?? null]);
     }
 
@@ -24,8 +24,13 @@ class AuthController extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Expo: pendaftaran hanya untuk penjual. Pembeli memesan tanpa akun.
-            User::create(['name' => $_POST['name'], 'email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller', 'status' => 'pending']);
-            $this->toast('Pendaftaran berhasil. Menunggu persetujuan admin.');
+            $username = substr(trim($_POST['username'] ?? ''), 0, 50);
+            if ($username !== '' && preg_match('/^[A-Za-z0-9_.-]+$/', $username) && ! User::where('username', $username)->exists()) {
+                User::create(['name' => $_POST['name'], 'username' => $username, 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller']);
+                $this->toast('Pendaftaran berhasil. Silakan masuk.');
+            } else {
+                $this->toast('Gagal mendaftar. Username sudah dipakai atau tidak valid.', 'danger');
+            }
             header('Location: /login');
 
             return;

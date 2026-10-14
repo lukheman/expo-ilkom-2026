@@ -20,10 +20,10 @@ class UserController extends Controller
 
     public function store()
     {
-        if (isset($_POST['name']) && isset($_POST['email'])) {
+        if (isset($_POST['name']) && isset($_POST['username'])) {
             User::create([
                 'name' => $_POST['name'],
-                'email' => $_POST['email'],
+                'username' => $_POST['username'],
             ]);
             $this->toast('User berhasil ditambahkan.');
         }
@@ -43,10 +43,10 @@ class UserController extends Controller
     public function update($id)
     {
         $user = User::find($id);
-        if ($user && isset($_POST['name']) && isset($_POST['email'])) {
+        if ($user && isset($_POST['name']) && isset($_POST['username'])) {
             $user->update([
                 'name' => $_POST['name'],
-                'email' => $_POST['email'],
+                'username' => $_POST['username'],
             ]);
             $this->toast('User berhasil diubah.');
         }

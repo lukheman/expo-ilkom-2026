@@ -207,8 +207,12 @@ class HomeController extends Controller
             }
             $catImages = [];
             foreach ($categories as $c) {
-                $first = Product::where('category_id', $c->id)->where('active', true)->first();
-                $catImages[$c->id] = $first && $first->image ? $first->image : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=60&auto=format&fit=crop';
+                if ($c->image) {
+                    $catImages[$c->id] = $c->image;
+                } else {
+                    $first = Product::where('category_id', $c->id)->where('active', true)->first();
+                    $catImages[$c->id] = $first && $first->image ? $first->image : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=60&auto=format&fit=crop';
+                }
             }
             foreach ($products as $p) {
                 $p->store_name = $storeMap[$p->store_id] ?? 'Toko';

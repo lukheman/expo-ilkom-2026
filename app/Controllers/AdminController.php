@@ -14,7 +14,7 @@ class AdminController extends Controller
     private function admin()
     {
         $u = isset($_SESSION['user']) ? User::find($_SESSION['user']) : null;
-        if (! $u || $u->role !== 'admin' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'admin') {
             header('Location: /login');
 
             return null;
@@ -28,8 +28,12 @@ class AdminController extends Controller
         $data['menu'] = $menu;
         $data['chrome'] = 'admin';
         $data['panel'] = 'Admin Expo';
-        $data['pending'] = User::where('role', 'seller')->where('status', 'pending')->count();
         $this->view($tpl, $data);
+    }
+
+    private function usernameOk($username)
+    {
+        return $username !== '' && preg_match('/^[A-Za-z0-9_.-]+$/', $username);
     }
 
     public function index()
@@ -40,7 +44,6 @@ class AdminController extends Controller
         $this->adminView('admin/dashboard', 'dashboard', [
             'title' => 'Admin Expo',
             'sellers' => User::where('role', 'seller')->count(),
-            'pending' => User::where('role', 'seller')->where('status', 'pending')->count(),
             'stores' => Store::count(),
             'products' => Product::count(),
             'orders' => Order::count(),
@@ -64,50 +67,21 @@ class AdminController extends Controller
         $this->adminView('admin/sellers', 'sellers', ['title' => 'Kelola Penjual', 'sellers' => $rows]);
     }
 
-    public function approve($id)
-    {
-        if (! $this->admin()) {
-            return;
-        }
-        $u = User::where('id', (int) $id)->where('role', 'seller')->first();
-        if ($u) {
-            $u->update(['status' => 'active']);
-            Store::where('user_id', $u->id)->update(['approved' => true]);
-            $this->toast('Penjual berhasil disetujui.');
-        }
-        header('Location: /admin/sellers');
-    }
-
-    public function reject($id)
-    {
-        if (! $this->admin()) {
-            return;
-        }
-        $u = User::where('id', (int) $id)->where('role', 'seller')->first();
-        if ($u) {
-            $u->update(['status' => 'rejected']);
-            Store::where('user_id', $u->id)->update(['approved' => false]);
-            $this->toast('Penjual berhasil ditolak.');
-        }
-        header('Location: /admin/sellers');
-    }
-
     public function storeSeller()
     {
         if (! $this->admin()) {
             return;
         }
         $name = substr(trim($_POST['name'] ?? ''), 0, 100);
-        $email = substr(trim($_POST['email'] ?? ''), 0, 100);
+        $username = substr(trim($_POST['username'] ?? ''), 0, 50);
         $password = $_POST['password'] ?? '';
         $storeName = substr(trim($_POST['store_name'] ?? ''), 0, 100);
-        if ($name !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && $password !== '' && ! User::where('email', $email)->exists()) {
+        if ($name !== '' && $this->usernameOk($username) && $password !== '' && ! User::where('username', $username)->exists()) {
             $u = User::create([
                 'name' => $name,
-                'email' => $email,
+                'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'role' => 'seller',
-                'status' => 'active',
             ]);
             Store::create([
                 'user_id' => $u->id,
@@ -116,7 +90,7 @@ class AdminController extends Controller
             ]);
             $this->toast('Penjual berhasil ditambahkan.');
         } else {
-            $this->toast('Gagal menambahkan. Email sudah terdaftar atau data tidak valid.', 'danger');
+            $this->toast('Gagal menambahkan. Username sudah terdaftar atau data tidak valid.', 'danger');
         }
         header('Location: /admin/sellers');
     }
@@ -134,13 +108,12 @@ class AdminController extends Controller
             return;
         }
         $name = substr(trim($_POST['name'] ?? $u->name), 0, 100);
-        $email = substr(trim($_POST['email'] ?? $u->email), 0, 100);
-        $status = in_array($_POST['status'] ?? $u->status, ['pending', 'active', 'rejected', 'nonactive'], true) ? $_POST['status'] : $u->status;
-        $data = ['name' => $name !== '' ? $name : $u->name, 'status' => $status];
-        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $exists = User::where('email', $email)->where('id', '!=', $u->id)->exists();
+        $username = substr(trim($_POST['username'] ?? $u->username), 0, 50);
+        $data = ['name' => $name !== '' ? $name : $u->name];
+        if ($this->usernameOk($username)) {
+            $exists = User::where('username', $username)->where('id', '!=', $u->id)->exists();
             if (! $exists) {
-                $data['email'] = $email;
+                $data['username'] = $username;
             }
         }
         if (trim($_POST['password'] ?? '') !== '') {
@@ -152,7 +125,7 @@ class AdminController extends Controller
         $storeData = [
             'name' => substr(trim($_POST['store_name'] ?? ($store->name ?? 'Stan '.$data['name'])), 0, 100),
             'booth_number' => substr(trim($_POST['booth_number'] ?? ''), 0, 10) ?: null,
-            'approved' => $status === 'active',
+            'approved' => true,
         ];
         if ($store) {
             $store->update($storeData);
@@ -162,32 +135,6 @@ class AdminController extends Controller
         }
         $this->toast('Penjual berhasil diubah.');
         header('Location: /admin/sellers');
-    }
-
-    public function toggleSeller($id)
-    {
-        if (! $this->admin()) {
-            return;
-        }
-        $u = User::where('id', (int) $id)->where('role', 'seller')->first();
-        if ($u) {
-            $new = $u->status === 'active' ? 'nonactive' : 'active';
-            $u->update(['status' => $new]);
-            Store::where('user_id', $u->id)->update(['approved' => $new === 'active']);
-            if (($_GET['format'] ?? '') === 'json') {
-                header('Content-Type: application/json');
-                echo json_encode(['ok' => true, 'status' => $new, 'label' => $this->sellerStatusLabel($new)]);
-
-                return;
-            }
-            $this->toast($new === 'active' ? 'Penjual berhasil diaktifkan.' : 'Penjual berhasil dinonaktifkan.');
-        }
-        header('Location: /admin/sellers');
-    }
-
-    private function sellerStatusLabel($status)
-    {
-        return ['pending' => 'Menunggu', 'active' => 'Aktif', 'rejected' => 'Ditolak'][$status] ?? $status;
     }
 
     public function delSeller($id)
@@ -221,50 +168,25 @@ class AdminController extends Controller
         $this->adminView('admin/users', 'users', ['title' => 'Kelola Pengguna', 'users' => User::orderBy('id')->get()]);
     }
 
-    public function toggleUser($id)
-    {
-        if (! $this->admin()) {
-            return;
-        }
-        $u = User::find((int) $id);
-        if ($u && $u->role !== 'admin') {
-            $new = $u->status === 'active' ? 'nonactive' : 'active';
-            $u->update(['status' => $new]);
-            if ($u->role === 'seller') {
-                Store::where('user_id', $u->id)->update(['approved' => $new === 'active']);
-            }
-            if (($_GET['format'] ?? '') === 'json') {
-                header('Content-Type: application/json');
-                echo json_encode(['ok' => true, 'status' => $new, 'label' => $new]);
-
-                return;
-            }
-            $this->toast($new === 'active' ? 'Pengguna berhasil diaktifkan.' : 'Pengguna berhasil dinonaktifkan.');
-        }
-        header('Location: /admin/users');
-    }
-
     public function storeUser()
     {
         if (! $this->admin()) {
             return;
         }
         $name = substr(trim($_POST['name'] ?? ''), 0, 100);
-        $email = substr(trim($_POST['email'] ?? ''), 0, 100);
+        $username = substr(trim($_POST['username'] ?? ''), 0, 50);
         $password = $_POST['password'] ?? '';
         $role = in_array($_POST['role'] ?? 'seller', ['admin', 'seller'], true) ? $_POST['role'] : 'seller';
-        $status = in_array($_POST['status'] ?? 'active', ['active', 'nonactive', 'pending'], true) ? $_POST['status'] : 'active';
-        if ($name !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && $password !== '' && ! User::where('email', $email)->exists()) {
+        if ($name !== '' && $this->usernameOk($username) && $password !== '' && ! User::where('username', $username)->exists()) {
             User::create([
                 'name' => $name,
-                'email' => $email,
+                'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'role' => $role,
-                'status' => $status,
             ]);
             $this->toast('Pengguna berhasil ditambahkan.');
         } else {
-            $this->toast('Gagal menambahkan. Email sudah terdaftar atau data tidak valid.', 'danger');
+            $this->toast('Gagal menambahkan. Username sudah terdaftar atau data tidak valid.', 'danger');
         }
         header('Location: /admin/users');
     }
@@ -276,13 +198,33 @@ class AdminController extends Controller
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && trim($_POST['name'] ?? '') !== '') {
             $name = substr(trim($_POST['name']), 0, 50);
-            Category::firstOrCreate(['name' => $name], ['slug' => strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name))]);
+            $image = substr(trim($_POST['image'] ?? ''), 0, 255) ?: null;
+            Category::firstOrCreate(['name' => $name], ['slug' => strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)), 'image' => $image]);
             $this->toast('Kategori berhasil ditambahkan.');
             header('Location: /admin/categories');
 
             return;
         }
         $this->adminView('admin/categories', 'categories', ['title' => 'Kelola Kategori', 'categories' => Category::orderBy('id')->get()]);
+    }
+
+    public function updateCategory($id)
+    {
+        if (! $this->admin()) {
+            return;
+        }
+        $c = Category::find((int) $id);
+        if ($c) {
+            $name = substr(trim($_POST['name'] ?? $c->name), 0, 50);
+            $data = ['image' => substr(trim($_POST['image'] ?? ''), 0, 255) ?: null];
+            if ($name !== '') {
+                $data['name'] = $name;
+                $data['slug'] = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+            }
+            $c->update($data);
+            $this->toast('Kategori berhasil diubah.');
+        }
+        header('Location: /admin/categories');
     }
 
     public function delCategory($id)

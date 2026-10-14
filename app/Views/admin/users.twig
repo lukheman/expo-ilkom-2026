@@ -17,39 +17,21 @@
       <thead>
         <tr>
           <th>Nama</th>
-          <th>Email</th>
+          <th>Username</th>
           <th>Peran</th>
-          <th>Status</th>
         </tr>
       </thead>
       <tbody>
         {% for u in users %}
           <tr>
             <td>{{ u.name|e }}</td>
-            <td>{{ u.email|e }}</td>
+            <td>{{ u.username|e }}</td>
             <td>
               <span
                 class="badge {% if u.role == 'admin' %}bg-dark{% elseif u.role == 'seller' %}bg-warning text-white{% else %}bg-info text-white{% endif %}"
               >
                 {{ u.role == 'seller' ? 'penjual' : u.role }}
               </span>
-            </td>
-            <td>
-              {% if u.role != 'admin' %}
-                <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
-                  <input
-                    class="form-check-input js-status-toggle mt-0"
-                    type="checkbox"
-                    role="switch"
-                    data-url="/admin/toggleUser/{{ u.id }}?format=json"
-                    data-label="statusLabel{{ u.id }}"
-                    {{ u.status == 'active' ? 'checked' : '' }}
-                  />
-                  <label class="form-label mb-0 small" id="statusLabel{{ u.id }}">{{ u.status }}</label>
-                </div>
-              {% else %}
-                <span class="text-secondary">{{ u.status }}</span>
-              {% endif %}
             </td>
           </tr>
         {% endfor %}
@@ -72,26 +54,22 @@
               <input class="form-control" name="name" maxlength="100" required />
             </div>
             <div class="col-12">
-              <label class="form-label">Email *</label>
-              <input class="form-control" type="email" name="email" maxlength="100" required />
+              <label class="form-label">Username *</label>
+              <input class="form-control" type="text" name="username" maxlength="50" required />
             </div>
             <div class="col-12">
               <label class="form-label">Password *</label>
               <input class="form-control" type="password" name="password" required />
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label class="form-label">Peran</label>
               <select class="form-select" name="role">
-                <option value="seller">penjual</option>
-                <option value="admin">admin</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <label class="form-label">Status</label>
-              <select class="form-select" name="status">
-                <option value="active">active</option>
-                <option value="nonactive">nonactive</option>
-                <option value="pending">pending</option>
+                <option value="seller">
+                  penjual
+                </option>
+                <option value="admin">
+                  admin
+                </option>
               </select>
             </div>
           </div>
@@ -103,17 +81,4 @@
       </div>
     </div>
   </div>
-  <script>
-    document.querySelectorAll('.js-status-toggle').forEach(function(sw){
-    sw.addEventListener('change',function(){
-    var want=sw.checked, label=document.getElementById(sw.dataset.label);
-    if(typeof fetch==='undefined'){if(sw.dataset.fallback){window.location=sw.dataset.fallback;}else{sw.checked=!want;}return;}
-    sw.disabled=true;
-    fetch(sw.dataset.url).then(function(r){return r.json();}).then(function(d){
-    if(d&&d.ok){if(label){label.textContent=d.label;}}
-    else{sw.checked=!want;}
-    }).catch(function(){sw.checked=!want;}).finally(function(){sw.disabled=false;});
-    });
-    });
-  </script>
 {% endblock %}

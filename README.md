@@ -16,14 +16,15 @@ Marketplace makanan Bahasa Indonesia berbasis PHP MVC, Twig, Bootstrap, dan Eloq
    php public/migrate.php
    php database/seed.php
    ```
-5. Jalankan:
+5. Jalankan (cukup perintah pendek ini):
    ```bash
-   php -S localhost:8000 -t public
+   composer serve
    ```
+   Setara dengan `php -S 0.0.0.0:8000 -t public`.
 6. Buka `http://localhost:8000`.
 
-Akun seed penjual: `demo1@rasa.test`, `demo2@rasa.test`, `demo3@rasa.test`. Password: `password`. Dashboard penjual: `/seller`.
-Akun seed admin: `admin@rasa.test` / `admin123`. Dashboard admin: `/admin` (persetujuan penjual, pengguna, kategori, produk, pesanan).
+Akun seed: `admin` / `password123` (ubah password setelah install). Dashboard penjual: `/seller` — penjual daftar lewat `/register` lalu disetujui admin.
+Akun seed admin: `admin` / `password123`. Dashboard admin: `/admin` (persetujuan penjual, pengguna, kategori, produk, pesanan).
 
 Checkout expo tanpa login: pembeli tekan Beli pada satu menu, isi nama + WA, langsung dapat satu kode ambil, bayar QRIS atau tunai di stan (tanpa payment gateway — verifikasi manual oleh penjual). Lihat `EXPO.md` untuk skema lengkap. Upload foto memakai URL gambar; storage dan validasi upload dapat ditambahkan pada tahap berikutnya.
 

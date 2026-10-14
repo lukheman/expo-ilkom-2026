@@ -16,6 +16,7 @@
     <table class="table table-hover align-middle mb-0 datatable w-100">
       <thead>
         <tr>
+          <th>Foto</th>
           <th>Nama</th>
           <th>Slug</th>
           <th class="no-sort">Aksi</th>
@@ -24,12 +25,36 @@
       <tbody>
         {% for c in categories %}
           <tr>
+            <td>
+              {% if c.image %}
+                <img
+                  src="{{ c.image|e }}"
+                  alt="{{ c.name|e }}"
+                  style="width:48px;height:48px;object-fit:cover;border-radius:12px"
+                />
+              {% else %}
+                <span class="text-secondary">—</span>
+              {% endif %}
+            </td>
             <td>{{ c.name|e }}</td>
             <td><small class="text-secondary">{{ c.slug }}</small></td>
             <td>
-              <a class="btn btn-sm btn-danger" href="/admin/delCategory/{{ c.id }}">
-                <i class="bi bi-trash"></i> Hapus
-              </a>
+              <div class="table-actions">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-warning"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editModal{{ c.id }}"
+                >
+                  <i class="bi bi-pencil"></i> Ubah
+                </button><a
+                  class="btn btn-sm btn-danger"
+                  href="/admin/delCategory/{{ c.id }}"
+                  onclick="return confirm('Hapus kategori {{ c.name|e('js') }}?')"
+                >
+                  <i class="bi bi-trash"></i> Hapus
+                </a>
+              </div>
             </td>
           </tr>
         {% endfor %}
@@ -49,11 +74,22 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form method="post">
-          <div class="modal-body">
-            <label class="form-label">Nama kategori *</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-tags"></i></span>
-              <input class="form-control" name="name" maxlength="50" placeholder="Nama kategori baru" required />
+          <div class="modal-body row g-2">
+            <div class="col-12">
+              <label class="form-label">Nama kategori *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-tags"></i></span>
+                <input class="form-control" name="name" maxlength="50" placeholder="Nama kategori baru" required />
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">URL foto</label>
+              <input
+                class="form-control"
+                name="image"
+                maxlength="255"
+                placeholder="https://… atau /uploads/… (opsional)"
+              />
             </div>
           </div>
           <div class="modal-footer">
@@ -64,4 +100,46 @@
       </div>
     </div>
   </div>
+
+  {# Modal Ubah per kategori #}
+  {% for c in categories %}
+    <div
+      class="modal fade"
+      id="editModal{{ c.id }}"
+      tabindex="-1"
+      aria-labelledby="editModalLabel{{ c.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel{{ c.id }}">Ubah Kategori #{{ c.id }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" action="/admin/updateCategory/{{ c.id }}">
+            <div class="modal-body row g-2">
+              <div class="col-12">
+                <label class="form-label">Nama kategori *</label>
+                <input class="form-control" name="name" maxlength="50" value="{{ c.name|e }}" required />
+              </div>
+              <div class="col-12">
+                <label class="form-label">URL foto</label>
+                <input
+                  class="form-control"
+                  name="image"
+                  maxlength="255"
+                  value="{{ c.image|default('')|e }}"
+                  placeholder="https://… atau /uploads/… (kosongkan untuk hapus)"
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 {% endblock %}

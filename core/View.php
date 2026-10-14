@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use App\Models\Product;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -30,7 +31,7 @@ class View
         if (! empty($_SESSION['cart'])) {
             try {
                 $ids = array_map('intval', array_keys($_SESSION['cart']));
-                foreach (\App\Models\Product::whereIn('id', $ids)->where('active', true)->get() as $p) {
+                foreach (Product::whereIn('id', $ids)->where('active', true)->get() as $p) {
                     $data['cartTotal'] += (float) $p->price * max(1, min(10, (int) ($_SESSION['cart'][$p->id] ?? 0)));
                 }
             } catch (\Throwable $e) {

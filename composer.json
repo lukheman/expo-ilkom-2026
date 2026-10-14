@@ -25,6 +25,7 @@
         "vincentlanglet/twig-cs-fixer": "^4.1"
     },
     "scripts": {
+        "serve": "php -S 0.0.0.0:8000 -t public",
         "format": "./vendor/bin/pint",
         "format:test": "./vendor/bin/pint --test",
         "format:twig": "./vendor/bin/twig-cs-fixer fix",

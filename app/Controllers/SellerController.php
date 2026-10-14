@@ -24,11 +24,6 @@ class SellerController extends Controller
 
             return [null, null];
         }
-        if ($u->status !== 'active') {
-            $this->view('seller/waiting', ['title' => 'Menunggu Persetujuan', 'status' => $u->status]);
-
-            return [null, null];
-        }
 
         return [$u, Store::where('user_id', $u->id)->first()];
     }
@@ -78,7 +73,7 @@ class SellerController extends Controller
     private function ownOrder($id)
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             return null;
         }
         $s = Store::where('user_id', $u->id)->first();
@@ -171,7 +166,7 @@ class SellerController extends Controller
     public function save()
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             header('Location: /seller');
 
             return;
@@ -228,7 +223,7 @@ class SellerController extends Controller
     public function update($id)
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             header('Location: /seller');
 
             return;
@@ -263,7 +258,7 @@ class SellerController extends Controller
     public function toggle($id)
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             header('Location: /seller');
 
             return;
@@ -286,7 +281,7 @@ class SellerController extends Controller
     public function delete($id)
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             header('Location: /seller');
 
             return;
@@ -314,7 +309,7 @@ class SellerController extends Controller
     public function updateStore()
     {
         [$u,$s] = [$this->user(), null];
-        if (! $u || $u->role !== 'seller' || $u->status !== 'active') {
+        if (! $u || $u->role !== 'seller') {
             header('Location: /seller');
 
             return;

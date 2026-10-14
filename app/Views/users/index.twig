@@ -14,7 +14,7 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
-          <th>Email</th>
+          <th>Username</th>
           <th class="no-sort">Actions</th>
         </tr>
       </thead>
@@ -23,7 +23,7 @@
           <tr>
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
+            <td>{{ user.username }}</td>
             <td>
               <div class="table-actions">
                 <a href="/user/edit/{{ user.id }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Edit</a>
@@ -61,8 +61,8 @@
               <input type="text" name="name" class="form-control" required />
             </div>
             <div class="mb-3">
-              <label class="form-label">Email:</label>
-              <input type="email" name="email" class="form-control" required />
+              <label class="form-label">Username:</label>
+              <input type="text" name="username" class="form-control" required />
             </div>
           </div>
           <div class="modal-footer">

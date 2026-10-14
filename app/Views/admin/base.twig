@@ -4,17 +4,16 @@
     /* Sidebar fixed menempel di kiri layar */
     .admin-side{position:fixed;left:0;top:0;bottom:0;width:260px;background:#fff;border-right:1px solid
     #f0f0f0;z-index:120;padding:16px 12px;overflow-y:auto;box-shadow:var(--sh-pop);transition:transform .25s ease}
-    .admin-side h4{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin:4px 12px 8px} /* Bootstrap nav-pills + sentuhan tema expo */ .admin-side
+    .admin-side h4{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin:4px
+    12px 8px} /* Bootstrap nav-pills + sentuhan tema expo */ .admin-side
     .nav-link{display:flex;align-items:center;gap:10px;color:#000;font-weight:600;font-size:14px;border-radius:12px;padding:12px;min-height:44px}
     .admin-side .nav-link:hover{background:#fafafa} .admin-side .nav-pills
     .nav-link.active{background:#E2543A;color:#fff} .admin-side .nav-link.logout{color:#C0262D} .admin-side
     .nav-link.logout:hover{background:#F9E2E3;color:#8E1B22}
     .admin-badge{margin-left:auto;background:#C0262D;color:#fff;font-size:11px;font-weight:700;border-radius:9999px;padding:2px
-    8px}
-    .side-logo{display:block;text-align:center;padding:8px 0 12px}
-    .side-logo img{height:48px;width:auto}
-    .admin-main{margin-left:260px;padding:24px 32px 64px;min-height:80vh;transition:margin-left .25s ease}
-    body.panel-closed .admin-side{transform:translateX(-110%)}
+    8px} .side-logo{display:block;text-align:center;padding:8px 0 12px} .side-logo
+    img{height:80px;width:auto;max-width:100%} .admin-main{margin-left:260px;padding:24px 32px
+    64px;min-height:80vh;transition:margin-left .25s ease} body.panel-closed .admin-side{transform:translateX(-110%)}
     body.panel-closed .admin-main,body.panel-closed .gf-footer{margin-left:0} .admin-main .gf-h2{margin-top:0} /* Tema
     kustom di atas Bootstrap */ .admin-main .card{border-radius:16px;border:1px solid #f0f0f0} .admin-main
     .table{--bs-table-hover-bg:#FCEFD9} .admin-main .table thead
@@ -36,9 +35,7 @@
         <i class="bi bi-house"></i> Dashboard
       </a>
       <a class="nav-link {% if menu == 'sellers' %}active{% endif %}" href="/admin/sellers">
-        <i class="bi bi-shop"></i> Penjual{% if pending %}
-          <span class="admin-badge">{{ pending }}</span>
-        {% endif %}
+        <i class="bi bi-shop"></i> Penjual
       </a>
       <a class="nav-link {% if menu == 'users' %}active{% endif %}" href="/admin/users">
         <i class="bi bi-people"></i> Pengguna

@@ -10,7 +10,6 @@ class _002_create_marketplace
             Capsule::schema()->table('users', function ($t) {
                 $t->string('password')->nullable();
                 $t->string('role')->default('buyer');
-                $t->string('status')->default('active');
             });
         }
         if (! Capsule::schema()->hasTable('categories')) {
