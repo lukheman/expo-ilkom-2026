@@ -36,6 +36,61 @@ class AdminController extends Controller
         return $username !== '' && preg_match('/^[A-Za-z0-9_.-]+$/', $username);
     }
 
+    private function phoneOk($phone)
+    {
+        return $phone === '' || preg_match('/^[+0-9][0-9 \-]{7,17}$/', $phone);
+    }
+
+    private function uploadImage($file, &$error)
+    {
+        $error = null;
+        if (! $file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $error = 'gagal';
+
+            return null;
+        }
+        if ($file['size'] > 2 * 1024 * 1024) {
+            $error = 'besar';
+
+            return null;
+        }
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $map = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
+        $mime = $finfo->file($file['tmp_name']);
+        if (! isset($map[$mime]) || ! @getimagesize($file['tmp_name'])) {
+            $error = 'tipe';
+
+            return null;
+        }
+        $dir = __DIR__.'/../../public/uploads';
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        $name = bin2hex(random_bytes(12)).'.'.$map[$mime];
+        if (! move_uploaded_file($file['tmp_name'], $dir.'/'.$name)) {
+            $error = 'gagal';
+
+            return null;
+        }
+
+        return '/uploads/'.$name;
+    }
+
+    private function removeLocalImage($path)
+    {
+        if ($path && str_starts_with($path, '/uploads/')) {
+            @unlink(__DIR__.'/../../public'.$path);
+        }
+    }
+
+    private function uploadErrorMessage($error)
+    {
+        return ['besar' => 'Foto terlalu besar (maks 2MB).', 'tipe' => 'Format foto harus JPG, PNG, WebP, atau GIF.', 'gagal' => 'Upload foto gagal, coba lagi.'][$error] ?? 'Upload foto gagal, coba lagi.';
+    }
+
     public function index()
     {
         if (! $this->admin()) {
@@ -76,12 +131,14 @@ class AdminController extends Controller
         $username = substr(trim($_POST['username'] ?? ''), 0, 50);
         $password = $_POST['password'] ?? '';
         $storeName = substr(trim($_POST['store_name'] ?? ''), 0, 100);
-        if ($name !== '' && $this->usernameOk($username) && $password !== '' && ! User::where('username', $username)->exists()) {
+        $phone = substr(trim($_POST['phone'] ?? ''), 0, 20);
+        if ($name !== '' && $this->usernameOk($username) && $this->phoneOk($phone) && $password !== '' && ! User::where('username', $username)->exists()) {
             $u = User::create([
                 'name' => $name,
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'role' => 'seller',
+                'phone' => $phone !== '' ? $phone : null,
             ]);
             Store::create([
                 'user_id' => $u->id,
@@ -110,6 +167,10 @@ class AdminController extends Controller
         $name = substr(trim($_POST['name'] ?? $u->name), 0, 100);
         $username = substr(trim($_POST['username'] ?? $u->username), 0, 50);
         $data = ['name' => $name !== '' ? $name : $u->name];
+        $phone = substr(trim($_POST['phone'] ?? ''), 0, 20);
+        if ($this->phoneOk($phone)) {
+            $data['phone'] = $phone !== '' ? $phone : null;
+        }
         if ($this->usernameOk($username)) {
             $exists = User::where('username', $username)->where('id', '!=', $u->id)->exists();
             if (! $exists) {
@@ -198,7 +259,13 @@ class AdminController extends Controller
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && trim($_POST['name'] ?? '') !== '') {
             $name = substr(trim($_POST['name']), 0, 50);
-            $image = substr(trim($_POST['image'] ?? ''), 0, 255) ?: null;
+            $image = $this->uploadImage($_FILES['photo'] ?? null, $uploadError);
+            if ($uploadError) {
+                $this->toast($this->uploadErrorMessage($uploadError), 'danger');
+                header('Location: /admin/categories');
+
+                return;
+            }
             Category::firstOrCreate(['name' => $name], ['slug' => strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)), 'image' => $image]);
             $this->toast('Kategori berhasil ditambahkan.');
             header('Location: /admin/categories');
@@ -216,10 +283,21 @@ class AdminController extends Controller
         $c = Category::find((int) $id);
         if ($c) {
             $name = substr(trim($_POST['name'] ?? $c->name), 0, 50);
-            $data = ['image' => substr(trim($_POST['image'] ?? ''), 0, 255) ?: null];
+            $image = $this->uploadImage($_FILES['photo'] ?? null, $uploadError);
+            if ($uploadError) {
+                $this->toast($this->uploadErrorMessage($uploadError), 'danger');
+                header('Location: /admin/categories');
+
+                return;
+            }
+            $data = [];
             if ($name !== '') {
                 $data['name'] = $name;
                 $data['slug'] = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+            }
+            if ($image) {
+                $this->removeLocalImage($c->image);
+                $data['image'] = $image;
             }
             $c->update($data);
             $this->toast('Kategori berhasil diubah.');
@@ -233,7 +311,11 @@ class AdminController extends Controller
             return;
         }
         if (! Product::where('category_id', (int) $id)->exists()) {
-            Category::where('id', (int) $id)->delete();
+            $c = Category::find((int) $id);
+            if ($c) {
+                $this->removeLocalImage($c->image);
+                $c->delete();
+            }
             $this->toast('Kategori berhasil dihapus.');
         } else {
             $this->toast('Kategori masih dipakai produk, tidak bisa dihapus.', 'danger');

@@ -18,6 +18,7 @@
         <tr>
           <th>Nama</th>
           <th>Username</th>
+          <th>No. WA</th>
           <th>Toko</th>
           <th class="no-sort">Aksi</th>
         </tr>
@@ -27,6 +28,7 @@
           <tr>
             <td>{{ u.name|e }}</td>
             <td>{{ u.username|e }}</td>
+            <td>{{ u.phone|default('—')|e }}</td>
             <td>
               {{ u.store_name|default('—')|e }}
               {% if u.booth_number %}
@@ -56,7 +58,7 @@
           </tr>
         {% else %}
           <tr>
-            <td colspan="4" class="text-secondary">Belum ada penjual terdaftar.</td>
+            <td colspan="5" class="text-secondary">Belum ada penjual terdaftar.</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -84,6 +86,16 @@
             <div class="col-12">
               <label class="form-label">Password *</label>
               <input class="form-control" type="password" name="password" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">No. WA</label>
+              <input
+                class="form-control"
+                type="tel"
+                name="phone"
+                maxlength="20"
+                placeholder="cth: 081234567890 (opsional)"
+              />
             </div>
             <div class="col-12">
               <label class="form-label">Nama toko</label>
@@ -136,6 +148,17 @@
                   Password <small class="text-secondary">(kosongkan jika tidak diganti)</small>
                 </label>
                 <input class="form-control" type="password" name="password" />
+              </div>
+              <div class="col-12">
+                <label class="form-label">No. WA</label>
+                <input
+                  class="form-control"
+                  type="tel"
+                  name="phone"
+                  maxlength="20"
+                  value="{{ u.phone|default('')|e }}"
+                  placeholder="cth: 081234567890"
+                />
               </div>
               <div class="col-8">
                 <label class="form-label">Nama toko</label>

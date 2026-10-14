@@ -25,11 +25,12 @@ class AuthController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Expo: pendaftaran hanya untuk penjual. Pembeli memesan tanpa akun.
             $username = substr(trim($_POST['username'] ?? ''), 0, 50);
-            if ($username !== '' && preg_match('/^[A-Za-z0-9_.-]+$/', $username) && ! User::where('username', $username)->exists()) {
-                User::create(['name' => $_POST['name'], 'username' => $username, 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller']);
+            $phone = substr(trim($_POST['phone'] ?? ''), 0, 20);
+            if ($username !== '' && preg_match('/^[A-Za-z0-9_.-]+$/', $username) && ($phone === '' || preg_match('/^[+0-9][0-9 \-]{7,17}$/', $phone)) && ! User::where('username', $username)->exists()) {
+                User::create(['name' => $_POST['name'], 'username' => $username, 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT), 'role' => 'seller', 'phone' => $phone !== '' ? $phone : null]);
                 $this->toast('Pendaftaran berhasil. Silakan masuk.');
             } else {
-                $this->toast('Gagal mendaftar. Username sudah dipakai atau tidak valid.', 'danger');
+                $this->toast('Gagal mendaftar. Username sudah dipakai / tidak valid, atau no. WA tidak valid.', 'danger');
             }
             header('Location: /login');
 

@@ -3,7 +3,7 @@
   <div class="gf-container" style="max-width:760px">
     <h1 class="gf-h2"><i class="bi bi-search"></i> Lacak Pesanan</h1>
     <p class="text-secondary">
-      Tanpa login. Masukkan <strong>kode ambil</strong> dari halaman pesanan berhasil (contoh: A1-001).
+      Masukkan <strong>kode ambil</strong> dari halaman pesanan berhasil (contoh: A1-001).
     </p>
     <form class="d-flex gap-2 mb-4" method="get" action="/home/track">
       <input
@@ -31,9 +31,9 @@
               </div>
             </div>
             <div class="mt-2">
-              Status: <span class="badge bg-warning text-white">{{ o.status }}</span> • Bayar: <em>{{ o.payment_method }} ({{
-                  o.payment_status
-                }})</em>
+              Status: <span class="badge bg-warning text-white">{{ o.status }}</span> • Bayar: <em>{{
+                  o.payment_method
+                }} ({{ o.payment_status }})</em>
             </div>
             <div class="text-secondary" style="font-size:13px">
               Menunggu → Diproses → Siap Diambil → Selesai

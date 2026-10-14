@@ -12,18 +12,21 @@
     <link href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.min.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/logo/logo-ladusing.png" />
     <style>
-      :root{ --bs-primary:#E2543A; --bs-primary-rgb:226,84,58; --bs-secondary:#7A1020; --bs-secondary-rgb:122,16,32; --bs-success:#7C9A2E; --bs-success-rgb:124,154,46; --bs-danger:#C0262D; --bs-danger-rgb:192,38,45; --bs-warning:#F2B52E; --bs-warning-rgb:242,181,46; --bs-info:#2B4570; --bs-info-rgb:43,69,112; --bs-light:#FFF4E6; --bs-light-rgb:255,244,230; --bs-dark:#2B1115; --bs-dark-rgb:43,17,21; --primary:#E2543A; --secondary:#7A1020; --bg:#ffffff; --bg2:#FFF4E6; --green-bg:#EBF1DA; --green:#7C9A2E;
-      --ink:#000000; --muted:#666666; --line:#e8e8e8; --line-soft:#fafafa; --sh-card:rgba(179,190,232,.61) 0 .7px 12px
-      0; --sh-pop:rgba(0,0,0,.12) 0 2px 8px 0; } *{box-sizing:border-box}
-      body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe
+      :root{ --bs-primary:#E2543A; --bs-primary-rgb:226,84,58; --bs-secondary:#7A1020; --bs-secondary-rgb:122,16,32;
+      --bs-success:#7C9A2E; --bs-success-rgb:124,154,46; --bs-danger:#C0262D; --bs-danger-rgb:192,38,45;
+      --bs-warning:#F2B52E; --bs-warning-rgb:242,181,46; --bs-info:#2B4570; --bs-info-rgb:43,69,112; --bs-light:#FFF4E6;
+      --bs-light-rgb:255,244,230; --bs-dark:#2B1115; --bs-dark-rgb:43,17,21; --primary:#E2543A; --secondary:#7A1020;
+      --bg:#ffffff; --bg2:#FFF4E6; --green-bg:#EBF1DA; --green:#7C9A2E; --ink:#000000; --muted:#666666; --line:#e8e8e8;
+      --line-soft:#fafafa; --sh-card:rgba(179,190,232,.61) 0 .7px 12px 0; --sh-pop:rgba(0,0,0,.12) 0 2px 8px 0; }
+      *{box-sizing:border-box} body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe
       UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;font-size:16px} a{color:inherit} /* =====
       header ala GoFood ===== */ .gf-header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid
       #f0f0f0} .gf-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px
       24px;min-height:72px}
       .gf-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.5px;text-decoration:none;color:#000}
       .gf-logo img{height:48px;width:auto;display:block}
-.gf-logo-text{display:flex;flex-direction:column;line-height:1.05}
-.gf-logo-text small{font-size:12px;font-weight:700;letter-spacing:3px;color:#7A1020}
+      .gf-logo-text{display:flex;flex-direction:column;line-height:1.05} .gf-logo-text
+      small{font-size:12px;font-weight:700;letter-spacing:3px;color:#7A1020}
       .gf-logo-mark{width:32px;height:32px;border-radius:50%;background:var(--secondary);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
       .gf-nav{display:flex;gap:8px;align-items:center} .gf-nav-link{padding:16px
       16px;font-weight:600;font-size:16px;color:#000;text-decoration:none;position:relative;white-space:nowrap}
@@ -37,10 +40,12 @@
       var(--line);border-radius:9999px;padding:8px
       14px;text-decoration:none;font-weight:600;font-size:14px;background:#fff;min-height:44px}
       .gf-cart-count{background:var(--secondary);color:#fff;border-radius:9999px;font-size:12px;padding:2px
-      8px;font-weight:700} .cart-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--green);color:#fff;border-radius:9999px;padding:12px
-      24px;display:flex;align-items:center;justify-content:space-between;gap:24px;width:min(720px,calc(100%
-      - 32px));box-shadow:var(--sh-pop);font-size:15px} .cart-bar small{display:block;font-size:12px;opacity:.85}
-      .cart-bar:hover{color:#fff} .cart-bar[hidden]{display:none} .gf-btn-masuk{border:1px solid var(--line);border-radius:16px;padding:8px
+      8px;font-weight:700}
+      .cart-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--green);color:#fff;border-radius:9999px;padding:12px
+      24px;display:flex;align-items:center;justify-content:space-between;gap:24px;width:min(720px,calc(100% -
+      32px));box-shadow:var(--sh-pop);font-size:15px} .cart-bar small{display:block;font-size:12px;opacity:.85}
+      .cart-bar:hover{color:#fff} .cart-bar[hidden]{display:none} .gf-btn-masuk{border:1px solid
+      var(--line);border-radius:16px;padding:8px
       16px;font-weight:600;font-size:14px;text-decoration:none;color:#000;background:#fff;min-height:44px;display:inline-flex;align-items:center}
       .gf-btn-daftar{background:var(--primary);border:1px solid var(--primary);border-radius:12px;padding:8px
       16px;font-weight:700;font-size:14px;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
@@ -95,8 +100,8 @@
       var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#fff;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
       .gf-add:hover{background:#C7452F} .gf-add-outline{border:1px solid
       #7C9A2E;color:#556B1E;background:#fff;border-radius:9999px;padding:8px
-      24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer}
-      .gf-add-outline:hover{background:#EBF1DA} .gf-add-outline:disabled{opacity:.5;cursor:not-allowed}
+      24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer} .gf-add-outline:hover{background:#EBF1DA}
+      .gf-add-outline:disabled{opacity:.5;cursor:not-allowed}
       .gf-step{width:36px;height:36px;border-radius:50%;border:1px solid
       #7C9A2E;background:#fff;color:#7C9A2E;font-size:20px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
       .gf-step:disabled{opacity:.35;cursor:not-allowed} /* toko */
@@ -107,7 +112,7 @@
       .btn{min-height:44px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
       .btn-primary{background:var(--primary)!important;border-color:var(--primary)!important;color:#fff!important}
       .btn-primary:hover{background:#C7452F!important;border-color:#C7452F!important;color:#fff!important}
-            .btn-success{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
+      .btn-success{background:var(--green)!important;border-color:var(--green)!important;color:#fff!important}
       .btn-danger{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
       .btn-outline-danger{color:var(--secondary)!important;border-color:var(--secondary)!important}
       .btn-outline-danger:hover{background:var(--secondary)!important;border-color:var(--secondary)!important;color:#fff!important}
@@ -118,19 +123,30 @@
       .bi{font-size:14px;line-height:1} .table-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
       .table-actions .btn{flex:0 0 auto} /* ===== filter status ala pill GoFood: hitam = aktif ===== */ .filter-bar
       .btn{border-radius:9999px} .form-control,.form-select{min-height:44px;border-radius:12px}
-      .gf-footer{border-top:1px solid #f0f0f0;padding:24px;text-align:center;color:var(--muted);font-size:13px}
-      @media(max-width:639px){ .gf-header-inner{padding:10px 16px;gap:12px;min-height:64px;flex-wrap:wrap}
-      .gf-nav-link{padding:12px 8px;font-size:14px} .gf-location{max-width:170px;padding:6px 12px}
-      .gf-banner-inner{padding:20px 16px 52px} .gf-banner-img{width:42vw;height:110px} .gf-container{padding:16px 16px
-      48px} .gf-search-float{padding:0 16px} }
+      .gf-footer{background:#fff;border-top:1px solid #f0f0f0;margin-top:32px}
+      .gf-footer-inner{max-width:1200px;margin:0 auto;padding:32px 24px 20px;display:grid;grid-template-columns:1.4fr
+      1fr 1fr;gap:24px} .gf-footer-brand img{height:40px;width:auto} .gf-footer-brand
+      p{color:var(--muted);font-size:14px;margin:12px 0 0;max-width:320px} .gf-footer
+      h5{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin:0 0 12px} .gf-footer
+      ul{list-style:none;margin:0;padding:0;display:grid;gap:8px} .gf-footer ul
+      a{color:#000;text-decoration:none;font-size:14px;font-weight:500} .gf-footer ul a:hover{color:var(--secondary)}
+      .gf-footer-info{color:var(--muted);font-size:14px;display:grid;gap:8px} .gf-footer-info
+      i{color:var(--secondary);margin-right:8px} .gf-footer-bottom{border-top:1px solid #f0f0f0;padding:14px
+      24px;text-align:center;color:var(--muted);font-size:13px} .gf-footer-bottom a{color:inherit}
+      .gf-footer-dev-top{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 24px
+      20px;font-size:13px;font-weight:600;color:var(--muted)} .gf-footer-dev-top
+      img{height:24px;width:auto;border-radius:6px}
+      @media(max-width:640px){.gf-footer-inner{grid-template-columns:1fr;padding:24px 16px}} @media(max-width:639px){
+      .gf-header-inner{padding:10px 16px;gap:12px;min-height:64px;flex-wrap:wrap} .gf-nav-link{padding:12px
+      8px;font-size:14px} .gf-location{max-width:170px;padding:6px 12px} .gf-banner-inner{padding:20px 16px 52px}
+      .gf-banner-img{width:42vw;height:110px} .gf-container{padding:16px 16px 48px} .gf-search-float{padding:0 16px} }
     </style>
     <style>
       .panel-top{display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid #f0f0f0;padding:10px
-      24px;position:sticky;top:0;z-index:100;margin-left:260px;transition:margin-left .25s ease}
-      body.panel-closed .panel-top{margin-left:0}
-      @media(max-width:860px){.panel-top{margin-left:0;padding:10px 16px}} /* =====
-      DataTables menyatu dengan tema expo ===== */ .datatable-card{overflow:hidden} .datatable-card
-      .dt-container{padding:4px 2px} .datatable-card
+      24px;position:sticky;top:0;z-index:100;margin-left:260px;transition:margin-left .25s ease} body.panel-closed
+      .panel-top{margin-left:0} @media(max-width:860px){.panel-top{margin-left:0;padding:10px 16px}} /* ===== DataTables
+      menyatu dengan tema expo ===== */ .datatable-card{overflow:hidden} .datatable-card .dt-container{padding:4px 2px}
+      .datatable-card
       .dt-layout-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:0 0
       12px} .datatable-card .dt-layout-row:last-child{margin:12px 0 0} .datatable-card
       .dt-search{display:flex;align-items:center;gap:8px} .datatable-card .dt-search
@@ -148,15 +164,19 @@
       .page-link{background:var(--primary)!important;border-color:var(--primary)!important;color:#000!important;font-weight:700}
       .datatable-card table.datatable{margin:0!important;width:100%!important} .datatable-card table.datatable thead
       th{white-space:nowrap;cursor:pointer} .datatable-card table.datatable thead th.no-sort{cursor:default}
-      .datatable-card .dt-empty{color:var(--muted)} .datatable-card .dt-scroll{border-radius:12px}
-      /* ===== breadcrumb pill modern tema expo (global admin/seller) ===== */ .breadcrumb{background:#FFF9EF;border:1px
-      solid #f0f0f0;border-radius:9999px;padding:8px 18px;margin-bottom:18px;box-shadow:var(--sh-card);font-size:14px;align-items:center}
-      .breadcrumb-item{font-weight:600;display:inline-flex;align-items:center} .breadcrumb-item a{color:#000;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-      .breadcrumb-item a:hover{color:#5C0D18;text-decoration:underline} .breadcrumb-item+.breadcrumb-item::before{content:"›";color:#999;font-weight:800}
-      .breadcrumb-item.active{color:#000!important;background:var(--primary);border-radius:9999px;padding:2px 12px;font-weight:700}
-      @media(max-width:639px){ .breadcrumb{font-size:13px;padding:6px 14px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap} }
-      @media(max-width:639px){ .datatable-card{padding:12px!important} .datatable-card .dt-search{width:100%}
-      .datatable-card .dt-search input{flex:1} }
+      .datatable-card .dt-empty{color:var(--muted)} .datatable-card .dt-scroll{border-radius:12px} /* ===== breadcrumb
+      pill modern tema expo (global admin/seller) ===== */ .breadcrumb{background:#FFF9EF;border:1px solid
+      #f0f0f0;border-radius:9999px;padding:8px
+      18px;margin-bottom:18px;box-shadow:var(--sh-card);font-size:14px;align-items:center}
+      .breadcrumb-item{font-weight:600;display:inline-flex;align-items:center} .breadcrumb-item
+      a{color:#000;text-decoration:none;display:inline-flex;align-items:center;gap:6px} .breadcrumb-item
+      a:hover{color:#5C0D18;text-decoration:underline}
+      .breadcrumb-item+.breadcrumb-item::before{content:"›";color:#999;font-weight:800}
+      .breadcrumb-item.active{color:#000!important;background:var(--primary);border-radius:9999px;padding:2px
+      12px;font-weight:700} @media(max-width:639px){ .breadcrumb{font-size:13px;padding:6px
+      14px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap} } @media(max-width:639px){
+      .datatable-card{padding:12px!important} .datatable-card .dt-search{width:100%} .datatable-card .dt-search
+      input{flex:1} }
     </style>
   </head>
   <body>
@@ -178,10 +198,8 @@
         </div>
       </div>
       <script>
-        document.addEventListener('DOMContentLoaded', function(){
-        var t = document.getElementById('appToast');
-        if(t && window.bootstrap){ new bootstrap.Toast(t).show(); }
-        });
+        document.addEventListener('DOMContentLoaded', function(){ var t = document.getElementById('appToast'); if(t &&
+        window.bootstrap){ new bootstrap.Toast(t).show(); } });
       </script>
     {% endif %}
     {% if chrome == 'admin' or chrome == 'seller' %}
@@ -201,7 +219,9 @@
             <a class="gf-nav-link" href="/">Beranda</a>
           </nav>
           <div class="gf-header-right">
-            <span class="gf-location"><i class="bi bi-geo-alt-fill"></i> <span>Auditorium USN Kolaka, Popalia</span></span>
+            <span class="gf-location">
+              <i class="bi bi-geo-alt-fill"></i> <span>Auditorium USN Kolaka, Popalia</span>
+            </span>
             <a class="gf-cart" href="/home/cart" id="navCart">
               <i class="bi bi-basket"></i> <span class="d-none d-sm-inline">Keranjang</span>
               {% if cartCount %}
@@ -219,15 +239,50 @@
 
     {% endblock %}
     <div class="gf-footer">
-      KewirausahaanDigital FTI • Ambil di stan • Bayar QRIS/tunai • <a href="/login">Penjual</a> • <a href="/admin">Admin</a>
+      <div class="gf-footer-inner">
+        <div class="gf-footer-brand">
+          <img src="/logo/logo-ladusing.png" alt="Logo Ladusing" />
+          <p>
+            Marketplace makanan expo FTI — pesan cepat, ambil di stan, bayar QRIS atau tunai.
+          </p>
+        </div>
+        <div>
+          <h5>Navigasi</h5>
+          <ul>
+            <li><a href="/">Beranda</a></li>
+            <li><a href="/home/cart">Keranjang</a></li>
+            <li><a href="/home/track">Lacak Pesanan</a></li>
+            <li><a href="/login">Masuk Penjual</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>Info Expo</h5>
+          <div class="gf-footer-info">
+            <span><i class="bi bi-geo-alt-fill"></i>Auditorium USN Kolaka, Popalia</span>
+            <span><i class="bi bi-basket"></i>Ambil di stan</span>
+            <span><i class="bi bi-cash-stack"></i>Bayar QRIS / tunai</span>
+          </div>
+        </div>
+      </div>
+      <div class="gf-footer-bottom">
+        © {{ 'now'|date('Y') }} KewirausahaanDigital FTI • <a href="/admin">Admin</a>
+      </div>
+      <div class="gf-footer-dev-top">
+        Dev By <img src="/logo/logo-lkh-dev.jpeg" alt="LKH Developer" />
+      </div>
     </div>
     {% if chrome != 'admin' and chrome != 'seller' %}
-      <a href="/home/cart" id="cartBar" class="cart-bar text-decoration-none" {% if not cartCount %}hidden{% endif %}>
+      <a href="/home/cart" id="cartBar" class="cart-bar text-decoration-none" {{ cartCount ? '' : 'hidden' }}>
         <span><strong><span id="cartBarCount">{{ cartCount }}</span> item</strong><small>Lihat keranjang</small></span>
-        <span><strong id="cartBarTotal">Rp {{ cartTotal|number_format(0, ',', '.') }}</strong> <i class="bi bi-basket-fill"></i></span>
+        <span>
+          <strong id="cartBarTotal">Rp {{ cartTotal|number_format(0, ',', '.') }}</strong>
+          <i class="bi bi-basket-fill"></i>
+        </span>
       </a>
       {% if cartCount %}
-        <style>body{padding-bottom:96px}</style>
+        <style>
+          body{padding-bottom:96px}
+        </style>
       {% endif %}
     {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -236,14 +291,17 @@
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js"></script>
     <script>
-      (function(){var b=document.getElementById('panelBurger'),s=document.getElementById('panelScrim');if(b){b.addEventListener('click',function(){if(window.matchMedia('(max-width:860px)').matches){document.body.classList.toggle('panel-open');}else{document.body.classList.toggle('panel-closed');}});}if(s){s.addEventListener('click',function(){document.body.classList.remove('panel-open');});}})();
+      (function(){var
+      b=document.getElementById('panelBurger'),s=document.getElementById('panelScrim');if(b){b.addEventListener('click',function(){if(window.matchMedia('(max-width:860px)').matches){document.body.classList.toggle('panel-open');}else{document.body.classList.toggle('panel-closed');}});}if(s){s.addEventListener('click',function(){document.body.classList.remove('panel-open');});}})();
     </script>
     <script>
       document.addEventListener('DOMContentLoaded', function(){ if(typeof DataTable === 'undefined') return; var lang =
-      { search: 'Cari:', searchPlaceholder: 'Ketik untuk mencari…', lengthMenu: 'Tampil _MENU_ data', info: 'Menampilkan _START_–_END_ dari _TOTAL_ data', infoEmpty: 'Tidak ada data', infoFiltered: '(disaring dari _MAX_ total data)',
+      { search: 'Cari:', searchPlaceholder: 'Ketik untuk mencari…', lengthMenu: 'Tampil _MENU_ data', info: 'Menampilkan
+      _START_–_END_ dari _TOTAL_ data', infoEmpty: 'Tidak ada data', infoFiltered: '(disaring dari _MAX_ total data)',
       emptyTable: 'Belum ada data.', zeroRecords: 'Data tidak ditemukan.', paginate: { first: 'Awal', last: 'Akhir',
       next: '›', previous: '‹' } }; document.querySelectorAll('table.datatable').forEach(function(el){
-      if(el.dataset.dtInit) return; el.dataset.dtInit = '1'; var noSort = []; el.querySelectorAll('thead th').forEach(function(th, i){ if(th.classList.contains('no-sort')) noSort.push(i); }); try{ new DataTable(el, {
+      if(el.dataset.dtInit) return; el.dataset.dtInit = '1'; var noSort = []; el.querySelectorAll('thead
+      th').forEach(function(th, i){ if(th.classList.contains('no-sort')) noSort.push(i); }); try{ new DataTable(el, {
       responsive: true, scrollX: false, autoWidth: false, pageLength: 10, lengthMenu: [5, 10, 25, 50, 100], ordering:
       true, searching: true, paging: el.dataset.paging !== 'off', order: [], columnDefs: noSort.length ? [{ orderable:
       false, targets: noSort }] : [], language: lang, layout: { topStart: 'pageLength', topEnd: 'search', bottomStart:

@@ -18,7 +18,7 @@
   <section class="gf-banner">
     <div class="gf-banner-inner">
       <div class="gf-banner-text">
-        Pesan cepat,<br />ambil di stan<small>Tanpa login • Bayar QRIS / tunai</small>
+        Pesan cepat,<br />ambil di stan<small>Bayar QRIS / tunai</small>
       </div>
       <img
         class="gf-banner-img"
@@ -44,18 +44,8 @@
   <div class="gf-container">
     <h2 class="gf-h2">{{ products|length }} menu expo, ambil di stan</h2>
 
-    <div class="gf-filters">
-      <a class="gf-pill" href="/" title="Filter"><i class="bi bi-funnel"></i></a>
-      <a class="gf-pill {% if filter == 'promo' %}active{% endif %}" href="/?filter=promo">Promo hidangan</a>
-      <a class="gf-pill {% if filter == 'termurah' %}active{% endif %}" href="/?filter=termurah">Termurah</a>
-      <a class="gf-pill {% if filter == 'hemat20' %}active{% endif %}" href="/?filter=hemat20">Di bawah 20rb</a>
-    </div>
-
     <div class="gf-cats">
-      <a
-        class="gf-cat {% if not cat %}active{% endif %}"
-        href="/?{{ q ? 'q=' ~ q ~ '&' : '' }}{{ filter ? 'filter=' ~ filter ~ '&' : '' }}"
-      >
+      <a class="gf-cat {% if not cat %}active{% endif %}" href="/?{{ q ? 'q=' ~ q : '' }}">
         <div class="gf-cat-img" style="background:#F7E3D8">
           <i class="bi bi-grid-fill"></i>
         </div>
@@ -64,10 +54,7 @@
         </div>
       </a>
       {% for c in categories %}
-        <a
-          class="gf-cat {% if cat == c.id %}active{% endif %}"
-          href="/?category={{ c.id }}{{ q ? '&q=' ~ q : '' }}{{ filter ? '&filter=' ~ filter : '' }}"
-        >
+        <a class="gf-cat {% if cat == c.id %}active{% endif %}" href="/?category={{ c.id }}{{ q ? '&q=' ~ q : '' }}">
           <div class="gf-cat-img">
             <img src="{{ cat_images[c.id] }}" alt="{{ c.name }}" style="width:100%;height:100%;object-fit:cover" />
           </div>
@@ -77,18 +64,6 @@
         </a>
       {% endfor %}
     </div>
-
-    {% if q or cat or filter %}
-      <div style="margin:12px 0;font-size:14px;color:#666">
-        Hasil{% if q %}
-          untuk "<b>{{ q }}</b>"
-        {% endif %}
-        {% if cat %} • kategori terpilih{% endif %}
-        {% if filter %}
-          • filter: {{ filter }}
-        {% endif %}• <a href="/">Reset</a>
-      </div>
-    {% endif %}
 
     <div class="gf-grid">
       {% for p in products %}

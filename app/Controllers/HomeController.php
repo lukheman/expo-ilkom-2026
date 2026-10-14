@@ -169,7 +169,6 @@ class HomeController extends Controller
     {
         $q = $_GET['q'] ?? '';
         $cat = $_GET['category'] ?? '';
-        $filter = $_GET['filter'] ?? '';
         try {
             $query = Product::where('active', true)
                 ->when($q, function ($x) use ($q) {
@@ -178,18 +177,7 @@ class HomeController extends Controller
                 ->when($cat, function ($x) use ($cat) {
                     $x->where('category_id', $cat);
                 });
-            if ($filter === 'promo') {
-                $query->where('price', '<', 25000);
-            }
-            if ($filter === 'hemat20') {
-                $query->where('price', '<=', 20000);
-            }
-            if ($filter === 'termurah') {
-                $query->orderBy('price', 'asc');
-            } else {
-                $query->orderBy('id', 'desc');
-            }
-            $products = $query->get();
+            $products = $query->orderBy('id', 'desc')->get();
             $stores = Store::where('approved', true)->get();
             $approvedIds = [];
             foreach ($stores as $s) {
@@ -229,7 +217,7 @@ class HomeController extends Controller
             'title' => 'KewirausahaanDigital FTI',
             'products' => $products, 'stores' => $stores, 'categories' => $categories,
             'cat_images' => $catImages ?? [],
-            'q' => $q, 'cat' => $cat, 'filter' => $filter,
+            'q' => $q, 'cat' => $cat,
             'habis' => isset($_GET['habis']),
             'db_error' => $db_error ?? null,
         ]);
