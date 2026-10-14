@@ -37,7 +37,10 @@
       var(--line);border-radius:9999px;padding:8px
       14px;text-decoration:none;font-weight:600;font-size:14px;background:#fff;min-height:44px}
       .gf-cart-count{background:var(--secondary);color:#fff;border-radius:9999px;font-size:12px;padding:2px
-      8px;font-weight:700} .gf-btn-masuk{border:1px solid var(--line);border-radius:16px;padding:8px
+      8px;font-weight:700} .cart-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--green);color:#fff;border-radius:9999px;padding:12px
+      24px;display:flex;align-items:center;justify-content:space-between;gap:24px;width:min(720px,calc(100%
+      - 32px));box-shadow:var(--sh-pop);font-size:15px} .cart-bar small{display:block;font-size:12px;opacity:.85}
+      .cart-bar:hover{color:#fff} .cart-bar[hidden]{display:none} .gf-btn-masuk{border:1px solid var(--line);border-radius:16px;padding:8px
       16px;font-weight:600;font-size:14px;text-decoration:none;color:#000;background:#fff;min-height:44px;display:inline-flex;align-items:center}
       .gf-btn-daftar{background:var(--primary);border:1px solid var(--primary);border-radius:12px;padding:8px
       16px;font-weight:700;font-size:14px;color:#000;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
@@ -90,7 +93,13 @@
       .gf-price{font-size:15px;font-weight:700;margin-top:4px}
       .gf-add{margin-top:8px;background:var(--primary);border:1px solid
       var(--primary);border-radius:12px;text-align:center;font-weight:700;font-size:14px;padding:10px;color:#fff;text-decoration:none;min-height:44px;display:flex;align-items:center;justify-content:center}
-      .gf-add:hover{background:#C7452F} /* toko */
+      .gf-add:hover{background:#C7452F} .gf-add-outline{border:1px solid
+      #7C9A2E;color:#556B1E;background:#fff;border-radius:9999px;padding:8px
+      24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer}
+      .gf-add-outline:hover{background:#EBF1DA} .gf-add-outline:disabled{opacity:.5;cursor:not-allowed}
+      .gf-step{width:36px;height:36px;border-radius:50%;border:1px solid
+      #7C9A2E;background:#fff;color:#7C9A2E;font-size:20px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+      .gf-step:disabled{opacity:.35;cursor:not-allowed} /* toko */
       .gf-stores{display:grid;grid-template-columns:1fr;gap:16px;margin-top:16px}
       @media(min-width:640px){.gf-stores{grid-template-columns:repeat(3,1fr)}} .gf-store-card{border:1px solid
       #f0f0f0;border-radius:16px;padding:16px;background:#fff;box-shadow:var(--sh-card)} /* compat bootstrap pages */
@@ -193,6 +202,12 @@
           </nav>
           <div class="gf-header-right">
             <span class="gf-location"><i class="bi bi-geo-alt-fill"></i> <span>Auditorium USN Kolaka, Popalia</span></span>
+            <a class="gf-cart" href="/home/cart" id="navCart">
+              <i class="bi bi-basket"></i> <span class="d-none d-sm-inline">Keranjang</span>
+              {% if cartCount %}
+                <span class="gf-cart-count" id="navCartCount">{{ cartCount }}</span>
+              {% endif %}
+            </a>
             <a class="gf-cart" href="/home/track">
               <i class="bi bi-search"></i> <span class="d-none d-sm-inline">Lacak</span>
             </a>
@@ -206,6 +221,15 @@
     <div class="gf-footer">
       KewirausahaanDigital FTI • Ambil di stan • Bayar QRIS/tunai • <a href="/login">Penjual</a> • <a href="/admin">Admin</a>
     </div>
+    {% if chrome != 'admin' and chrome != 'seller' %}
+      <a href="/home/cart" id="cartBar" class="cart-bar text-decoration-none" {% if not cartCount %}hidden{% endif %}>
+        <span><strong><span id="cartBarCount">{{ cartCount }}</span> item</strong><small>Lihat keranjang</small></span>
+        <span><strong id="cartBarTotal">Rp {{ cartTotal|number_format(0, ',', '.') }}</strong> <i class="bi bi-basket-fill"></i></span>
+      </a>
+      {% if cartCount %}
+        <style>body{padding-bottom:96px}</style>
+      {% endif %}
+    {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>

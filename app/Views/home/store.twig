@@ -1,0 +1,180 @@
+{% extends 'layout.twig' %}
+{% block content %}
+  <div class="gf-container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ store.name|e }}</li>
+      </ol>
+    </nav>
+    <div class="card p-4 mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-4 text-center">
+          {% if store.photo %}
+            <img
+              src="{{ store.photo|e }}"
+              alt="{{ store.name|e }}"
+              style="width:100%;max-width:120px;border-radius:16px;object-fit:cover"
+            />
+          {% else %}
+            <div style="font-size:64px;color:#999">
+              <i class="bi bi-shop"></i>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-md-8">
+          <h1 class="gf-h2 mt-0">{{ store.name|e }}</h1>
+          {% if store.description %}
+            <p class="text-secondary">{{ store.description|e }}</p>
+          {% endif %}
+          <div>
+            <span class="badge bg-secondary">Stan {{ store.booth_number|default('—') }}</span>
+            <span class="badge bg-success">{{ products|length }} menu</span>
+          </div>
+        </div>
+      </div>
+      {% if store.qris_image %}
+        <div class="text-center mt-3 pt-3" style="border-top:1px solid #f0f0f0">
+          <strong>QRIS {{ store.name|e }}</strong>
+          <div class="my-2">
+            <img
+              src="{{ store.qris_image|e }}"
+              alt="QRIS {{ store.name|e }}"
+              style="max-width:240px;width:100%;border-radius:12px"
+            />
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <h2 class="gf-h2">Menu {{ store.name|e }}</h2>
+    <div class="gf-grid">
+      {% for p in products %}
+        <div class="gf-card">
+          <div class="gf-card-imgwrap">
+            <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" />
+            {% if p.stock <= 0 %}
+              <div class="gf-sold">
+                <i class="bi bi-x-circle"></i> Habis
+              </div>
+            {% endif %}
+          </div>
+          <div class="gf-card-body">
+            <h3 class="gf-title">{{ p.name }}</h3>
+            <div class="gf-store">
+              {{ p.store_name }}{% if p.category_name %} • {{ p.category_name }}{% endif %}
+            </div>
+            <div class="gf-meta">
+              {% if p.stock > 0 %}
+                Sisa {{ p.stock }}
+              {% else %}
+                Stok habis
+              {% endif %}
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px">
+              <div>
+                <span style="font-weight:700">Rp {{ p.price|number_format(0, ',', '.') }}</span>
+              </div>
+              {% if p.stock > 0 %}
+                <div id="cartAct{{ p.id }}" data-pid="{{ p.id }}" data-stock="{{ p.stock }}">
+                  {% set q = cart[p.id] ?? 0 %}
+                  {% if q > 0 %}
+                    <span class="d-inline-flex align-items-center gap-2">
+                      <button class="gf-step" type="button" data-dec="{{ p.id }}" title="Kurangi">−</button>
+                      <b>{{ q }}</b>
+                      <button
+                        class="gf-step"
+                        type="button"
+                        data-inc="{{ p.id }}"
+                        title="Tambah"
+                        {{ q >= (p.stock < 10 ? p.stock : 10) ? 'disabled' : '' }}
+                      >
+                        +
+                      </button>
+                    </span>
+                  {% else %}
+                    <form method="post" action="/home/cartAdd" class="m-0 js-cart-add">
+                      <input type="hidden" name="product_id" value="{{ p.id }}" />
+                      <input type="hidden" name="qty" value="1" />
+                      <button class="gf-add-outline" type="submit">
+                        <i class="bi bi-plus-lg"></i> Tambah
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              {% else %}
+                <button class="gf-add-outline" type="button" disabled>
+                  Habis
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <p class="text-secondary">Stan ini belum memiliki menu aktif.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+    var cartState = { {% for id, q in cart %}{{ id }}:{{ q }},{% endfor %} };
+    function cartStock(pid){var el=document.getElementById('cartAct'+pid);
+    return el?parseInt(el.dataset.stock,10)||0:0;}
+    function miniToast(msg,ok){var t=document.createElement('div');t.textContent=msg;
+    t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:4000;color:#fff;padding:10px 20px;border-radius:9999px;font-size:14px;font-weight:600;background:'+(ok?'#7C9A2E':'#C0262D');
+    document.body.appendChild(t);setTimeout(function(){t.remove();},2500);}
+    function rpCart(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
+    function syncCartBar(count,total){var bar=document.getElementById('cartBar');
+    if(!bar){return;}
+    document.getElementById('cartBarCount').textContent=count;
+    document.getElementById('cartBarTotal').textContent=rpCart(total);
+    bar.hidden=count<=0;document.body.style.paddingBottom=count>0?'96px':'';}
+    function syncNavCart(count){var badge=document.getElementById('navCartCount');
+    if(badge){if(count>0){badge.textContent=count;}else{badge.remove();}return;}
+    if(count>0){var s=document.createElement('span');s.id='navCartCount';
+    s.className='gf-cart-count';s.textContent=count;
+    document.getElementById('navCart').appendChild(s);}}
+    function tambahHTML(pid){return '<form method="post" action="/home/cartAdd" class="m-0 js-cart-add">'
+    +'<input type="hidden" name="product_id" value="'+pid+'" />'
+    +'<input type="hidden" name="qty" value="1" />'
+    +'<button class="gf-add-outline" type="submit"><i class="bi bi-plus-lg"></i> Tambah</button></form>';}
+    function stepperHTML(pid,qty,cap){return '<span class="d-inline-flex align-items-center gap-2">'
+    +'<button class="gf-step" type="button" data-dec="'+pid+'" title="Kurangi">−</button>'
+    +'<b>'+qty+'</b>'
+    +'<button class="gf-step" type="button" data-inc="'+pid+'" title="Tambah"'+(qty>=cap?' disabled':'')+'>+</button></span>';}
+    function renderAct(pid){var box=document.getElementById('cartAct'+pid);
+    if(!box){return;}
+    var qty=cartState[pid]||0, cap=Math.min(10,cartStock(pid));
+    box.innerHTML=qty>0?stepperHTML(pid,qty,cap):tambahHTML(pid);}
+    function postCart(url,fd,done){fetch(url,{method:'POST',body:fd,
+    headers:{'X-Requested-With':'XMLHttpRequest'}}).then(function(r){return r.json();}).then(done).catch(function(){miniToast('Jaringan bermasalah.',false);});}
+    document.addEventListener('submit',function(e){
+    var f=e.target.closest?e.target.closest('.js-cart-add'):null;
+    if(!f){return;}
+    e.preventDefault();
+    var btn=f.querySelector('button[type=submit]');
+    btn.disabled=true;
+    var fd=new FormData(f);
+    postCart(f.action,fd,function(d){
+    btn.disabled=false;
+    if(d&&d.ok){cartState[d.pid]=d.qty;renderAct(d.pid);
+    syncNavCart(d.count);syncCartBar(d.count,d.total);
+    if(d.message){miniToast(d.message,true);}}
+    else{miniToast((d&&d.message)||'Gagal menambahkan.',false);}
+    });
+    });
+    document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('[data-inc],[data-dec]'):null;
+    if(!b||b.disabled){return;}
+    var pid=parseInt(b.dataset.inc||b.dataset.dec,10);
+    var cur=cartState[pid]||0, next=b.dataset.inc?cur+1:cur-1;
+    b.disabled=true;
+    var fd=new FormData();
+    fd.append('product_id',pid);fd.append('qty',next);
+    postCart('/home/cartUpdate',fd,function(d){
+    if(d&&d.ok){cartState[d.pid]=d.qty;renderAct(d.pid);
+    syncNavCart(d.count);syncCartBar(d.count,d.total);
+    if(d.message){miniToast(d.message,d.qty>0);}}
+    else{miniToast((d&&d.message)||'Gagal mengubah.',false);renderAct(pid);}
+    });
+    });
+  </script>
+{% endblock %}
