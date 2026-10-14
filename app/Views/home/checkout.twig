@@ -5,13 +5,6 @@
       <h1 class="gf-h2 mb-0">Checkout — Ambil di Stan</h1>
       <a href="/home/cart" class="btn btn-sm btn-secondary"><i class="bi bi-arrow-left"></i> Keranjang</a>
     </div>
-    {% if scoped and groups|length %}
-      <div class="alert alert-info">
-        <i class="bi bi-shop"></i> Checkout stan
-        <strong>{{ groups[0].store ? groups[0].store.name : 'tersebut' }}</strong> saja — item stan lain tetap di
-        keranjang.
-      </div>
-    {% endif %}
     {% if error %}
       <div class="alert alert-danger">
         {{ error }}
