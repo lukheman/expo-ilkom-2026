@@ -1,43 +1,63 @@
 {% extends 'layout.twig' %}
 {% block content %}
   <div class="gf-container" style="max-width:760px">
-    <h1 class="gf-h2">Checkout — Ambil di Stan</h1>
-    <div class="alert alert-success">
-      Tanpa daftar / tanpa login. Langsung beli, ambil di stan, bayar QRIS atau tunai.
+    <div class="d-flex justify-content-between align-items-center">
+      <h1 class="gf-h2 mb-0">Checkout — Ambil di Stan</h1>
+      <a href="/home/cart" class="btn btn-sm btn-secondary"><i class="bi bi-arrow-left"></i> Keranjang</a>
     </div>
+    {% if scoped and groups|length %}
+      <div class="alert alert-info">
+        <i class="bi bi-shop"></i> Checkout stan
+        <strong>{{ groups[0].store ? groups[0].store.name : 'tersebut' }}</strong> saja — item stan lain tetap di
+        keranjang.
+      </div>
+    {% endif %}
     {% if error %}
       <div class="alert alert-danger">
         {{ error }}
       </div>
     {% endif %}
-    {% if (items|length) == 0 %}
+    {% if (groups|length) == 0 %}
       <div class="text-center py-5">
         <div style="font-size:4rem">
           <i class="bi bi-basket"></i>
         </div>
-        <h3>Belum ada item dibeli</h3>
+        <h3>Keranjang masih kosong</h3>
         <p class="text-secondary">
-          Pilih menu lalu tekan <strong>Beli</strong>.
-        </p><a href="/" class="btn btn-primary">Pilih makanan</a>
+          Pilih menu lalu tekan <strong>Tambah</strong>.
+        </p><a href="/" class="btn btn-primary">Lihat menu</a>
       </div>
     {% else %}
-      <div class="card p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <strong><i class="bi bi-shop"></i> {{ store ? store.name : 'Stan' }}</strong>
-          <span class="badge bg-secondary">Stan {{ store and store.booth_number ? store.booth_number : '—' }}</span>
-        </div>
-        {% for p in items %}
-          <div class="d-flex justify-content-between py-2 border-bottom">
-            <span>
-              {{ p.qty }}× {{ p.name }}
-            </span>
-            <strong>Rp {{ p.subtotal|number_format(0, ',', '.') }}</strong>
+      {% for g in groups %}
+        <div class="card p-3 mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong><i class="bi bi-shop"></i> {{ g.store ? g.store.name : 'Stan' }}</strong>
+            <span class="badge bg-secondary">Stan {{ g.store and g.store.booth_number ? g.store.booth_number : '—' }}</span>
           </div>
-        {% endfor %}
-      </div>
+          {% for p in g.items %}
+            <div class="d-flex gap-2 py-2 border-bottom align-items-center">
+              {% if p.image %}
+                <img
+                  src="{{ p.image|e }}"
+                  alt="{{ p.name|e }}"
+                  style="width:48px;height:48px;object-fit:cover;border-radius:10px;flex:0 0 auto"
+                />
+              {% endif %}
+              <span class="flex-fill">
+                {{ p.qty }}× {{ p.name }}
+              </span>
+              <strong>Rp {{ p.subtotal|number_format(0, ',', '.') }}</strong>
+            </div>
+          {% endfor %}
+          <div class="d-flex justify-content-between pt-2">
+            <span class="text-secondary">Subtotal stan</span><strong>Rp {{ g.subtotal|number_format(0, ',', '.') }}</strong>
+          </div>
+        </div>
+      {% endfor %}
       <div class="card p-4">
         <form method="post">
           <input type="hidden" name="step" value="confirm" />
+          <input type="hidden" name="store_id" value="{{ scoped|default(0) }}" />
           <label class="form-label">Nama pemesan *</label>
           <input
             class="form-control mb-3"
@@ -77,31 +97,40 @@
               {{ old.payment == 'Tunai di stan' ? 'checked' : '' }}
             /><label class="form-check-label" for="payT"><strong>Tunai di stan</strong> — bayar saat ambil</label>
           </div>
-          {% if store and store.qris_image %}
-            <div id="qrisBox" class="card p-3 mb-3 text-center" style="background:#fafafa">
-              <strong>Scan QRIS {{ store.name|e }}</strong>
-              <div class="my-2">
-                <img
-                  src="{{ store.qris_image|e }}"
-                  alt="QRIS {{ store.name|e }}"
-                  style="max-width:260px;width:100%;border-radius:12px"
-                />
+          {% for g in groups %}
+            {% if g.store and g.store.qris_image %}
+              <div class="js-qris-box card p-3 mb-3 text-center" style="background:#fafafa">
+                <strong>Scan QRIS {{ g.store.name|e }}</strong>
+                <div class="my-2">
+                  <img
+                    src="{{ g.store.qris_image|e }}"
+                    alt="QRIS {{ g.store.name|e }}"
+                    style="max-width:260px;width:100%;border-radius:12px"
+                  />
+                </div>
+                <small class="text-secondary">Bayar dulu, lalu buat pesanan. Penjual verifikasi di stan.</small>
               </div>
-              <small class="text-secondary">Bayar dulu, lalu buat pesanan. Penjual verifikasi di stan.</small>
-            </div>
-            <script>
-              function syncQris(){var c=document.querySelector('input[name="payment"]:checked');
-              var b=document.getElementById('qrisBox');if(b){b.hidden=!c||c.value!=='QRIS';}}
-              document.querySelectorAll('input[name="payment"]').forEach(function(r){r.addEventListener('change',syncQris);});
-              document.addEventListener('DOMContentLoaded',syncQris);syncQris();
-            </script>
-          {% endif %}
+            {% elseif g.store %}
+              <div class="js-qris-box alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                Stan <strong>{{ g.store.name|e }}</strong> belum memasang QRIS — siapkan
+                <strong>Tunai</strong> atau scan langsung di stan.
+              </div>
+            {% endif %}
+          {% endfor %}
+          <script>
+            function syncQris(){var c=document.querySelector('input[name="payment"]:checked');
+            var show=c&&c.value==='QRIS';
+            document.querySelectorAll('.js-qris-box').forEach(function(b){b.hidden=!show;});}
+            document.querySelectorAll('input[name="payment"]').forEach(function(r){r.addEventListener('change',syncQris);});
+            document.addEventListener('DOMContentLoaded',syncQris);syncQris();
+          </script>
           <label class="form-label">Catatan (opsional)</label>
           <textarea class="form-control mb-3" name="note" placeholder="Contoh: es sedikit, sambal pisah">
             {{ old.note|e }}
           </textarea>
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span>Total bayar</span><h2 class="price mb-0">Rp {{ total|number_format(0, ',', '.') }}</h2>
+            <span>Total bayar</span><h2 class="price mb-0">Rp {{ grand|number_format(0, ',', '.') }}</h2>
           </div>
           <button class="btn btn-primary w-100">Buat Pesanan — Ambil di Stan</button>
         </form>

@@ -119,17 +119,9 @@
                 <span style="font-weight:700">Rp {{ p.price|number_format(0, ',', '.') }}</span>
               </div>
               {% if p.stock > 0 %}
-                <button
-                  class="gf-add-outline js-open-modal"
-                  type="button"
-                  data-id="{{ p.id }}"
-                  data-name="{{ p.name|e('html_attr') }}"
-                  data-desc="{{ p.description|e('html_attr') }}"
-                  data-price="{{ p.price }}"
-                  data-image="{{ p.image|e('html_attr') }}"
-                >
+                <a class="gf-add-outline text-decoration-none" href="/home/store/{{ p.store_id }}">
                   Beli
-                </button>
+                </a>
               {% else %}
                 <button class="gf-add-outline" type="button" disabled>
                   Habis
@@ -148,7 +140,7 @@
     <h2 class="gf-h2">Toko pilihan</h2>
     <div class="gf-stores">
       {% for s in stores %}
-        <div class="gf-store-card">
+        <a href="/home/store/{{ s.id }}" class="gf-store-card text-decoration-none">
           {% if s.photo %}
             <img
               src="{{ s.photo|e }}"
@@ -165,110 +157,10 @@
             {{ s.description }}
           </p>
           <div style="font-size:13px;color:#666;margin-top:8px">
-            Stan {{ s.booth_number|default('—') }}
+            Stan {{ s.booth_number|default('—') }} • Lihat menu <i class="bi bi-arrow-right"></i>
           </div>
-        </div>
+        </a>
       {% endfor %}
     </div>
   </div>
-
-  <style>
-    .gf-add-outline{border:1px solid #7C9A2E;color:#556B1E;background:#fff;border-radius:9999px;padding:8px
-    24px;font-weight:600;font-size:14px;min-height:44px;cursor:pointer} .gf-add-outline:hover{background:#EBF1DA}
-    .gf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
-    .gf-overlay[hidden]{display:none}
-    .gf-modal{background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:rgba(0,0,0,.12)
-    0 2px 8px 0} .gf-modal-scroll{overflow-y:auto;padding:24px 24px 0} .gf-modal
-    h3{font-size:20px;font-weight:700;margin:0 0 4px} .gf-modal-desc{font-size:14px;color:#666;margin:0 0 12px}
-    .gf-modal-price{font-size:16px;font-weight:700} .gf-modal-price
-    s{color:#999;font-weight:400;margin-left:8px;font-size:14px}
-    .gf-sec-title{font-size:18px;font-weight:700;margin:20px 0 0} .gf-opt-group{border-top:1px solid
-    #f0f0f0;margin-top:16px;padding-top:16px}
-    .gf-opt-head{font-size:16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-    .gf-opt-head span{color:#7C9A2E} .gf-req{font-size:14px;color:#666;margin:4px 0 8px} .gf-req
-    b{color:#7C9A2E;font-weight:600} .gf-opt{display:flex;justify-content:space-between;align-items:center;padding:12px
-    0;border-bottom:1px solid #f6f6f6;font-size:15px;cursor:pointer} .gf-opt
-    input{width:22px;height:22px;accent-color:#7C9A2E} .gf-foot{position:sticky;bottom:0;background:#fff;padding:16px 0
-    20px;border-top:1px solid #f0f0f0;margin-top:16px}
-    .gf-qtyrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px}
-    .gf-stepper{display:flex;align-items:center;gap:12px} .gf-step{width:36px;height:36px;border-radius:50%;border:1px
-    solid
-    #7C9A2E;background:#fff;color:#7C9A2E;font-size:20px;line-height:1;cursor:pointer;min-width:44px;min-height:44px}
-    .gf-step:disabled{opacity:.35}
-    .gf-submit{width:100%;background:#7C9A2E;color:#fff;border:0;border-radius:9999px;padding:14px
-    24px;font-size:16px;font-weight:700;min-height:52px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .gf-submit strong{font-size:18px}
-    .gf-close{position:absolute;top:12px;right:16px;border:0;background:#f0f0f0;width:36px;height:36px;border-radius:50%;cursor:pointer}
-  </style>
-
-  <div class="gf-overlay" id="gfOverlay" hidden>
-    <div class="gf-modal" role="dialog" aria-modal="true">
-      <div style="position:relative">
-        <button class="gf-close" id="gfClose" type="button"><i class="bi bi-x-lg"></i></button>
-        <div class="gf-modal-scroll">
-          <h3 id="mName"></h3>
-          <p class="gf-modal-desc" id="mDesc"></p>
-          <div class="gf-modal-price">
-            <span id="mPrice"></span>
-          </div>
-          <div class="gf-sec-title">
-            Sesuaikan pesanan
-          </div>
-          <form method="post" action="/home/checkout" id="mForm">
-            <input type="hidden" name="product_id" id="mId" />
-            <input type="hidden" name="qty" id="mQtyInput" value="1" />
-            <div class="gf-foot">
-              <div class="gf-qtyrow">
-                <span>Berapa banyak?</span>
-                <span class="gf-stepper">
-                  <button class="gf-step" id="qMinus" type="button">−</button><b id="qVal">1</b><button
-                    class="gf-step"
-                    id="qPlus"
-                    type="button"
-                  >
-                    +
-                  </button>
-                </span>
-              </div>
-              <button class="gf-submit" id="mSubmit" type="submit">
-                <span>Beli Sekarang</span><strong id="mTotal"></strong>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function(){
-    var overlay=document.getElementById('gfOverlay');
-    var mName=document.getElementById('mName');
-    var mDesc=document.getElementById('mDesc');
-    var mPrice=document.getElementById('mPrice');
-    var mId=document.getElementById('mId');
-    var qVal=document.getElementById('qVal');
-    var qIn=document.getElementById('mQtyInput');
-    var mTotal=document.getElementById('mTotal');
-    var base=0, qty=1;
-    function rp(n){return 'Rp '+Number(n).toLocaleString('id-ID');}
-    function total(){return base*qty;}
-    function refresh(){
-    mPrice.textContent=rp(base);mTotal.textContent=rp(total());
-    qVal.textContent=qty;qIn.value=qty;
-    document.getElementById('qMinus').disabled=qty<=1;
-    document.getElementById('qPlus').disabled=qty>=10;}
-    document.querySelectorAll('.js-open-modal').forEach(function(b){b.addEventListener('click',function(){
-    base=parseInt(b.dataset.price,10)||0;mId.value=b.dataset.id;mName.textContent=b.dataset.name;
-    mDesc.textContent=b.dataset.desc||'Dibuat segar dengan bahan pilihan.';
-    qty=1;
-    refresh();overlay.hidden=false;document.body.style.overflow='hidden'; });});
-    document.getElementById('qMinus').addEventListener('click',function(){if(qty>1){qty--;refresh();}});
-    document.getElementById('qMinus').addEventListener('click',function(){if(qty>1){qty--;refresh();}});
-    document.getElementById('qPlus').addEventListener('click',function(){if(qty<10){qty++;refresh();}});
-    document.getElementById('gfClose').addEventListener('click',function(){overlay.hidden=true;document.body.style.overflow='';});
-    overlay.addEventListener('click',function(e){if(e.target===overlay){overlay.hidden=true;document.body.style.overflow='';}});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'){overlay.hidden=true;document.body.style.overflow='';}});
-    })();
-  </script>
 {% endblock %}

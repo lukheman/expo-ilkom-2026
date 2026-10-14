@@ -13,6 +13,14 @@
         Tunjukkan <strong>kode ambil</strong> di bawah ke penjual di stan, lalu bayar sesuai metode yang dipilih. Screenshot
         halaman ini.
       </div>
+      <div class="card p-3 mb-3 text-center">
+        <small class="text-secondary">Atas nama</small>
+        <h2 class="mb-1">{{ orders[0].customer_name|e }}</h2>
+        <div>
+          {{ orders[0].payment_method|e }} • <em>{{ orders[0].payment_status }}</em> • Total
+          <strong class="price">Rp {{ grand|number_format(0, ',', '.') }}</strong>
+        </div>
+      </div>
       {% for o in orders %}
         <div class="card p-3 mb-3 text-center">
           <small class="text-secondary">Kode ambil — {{ o.store_name }} (Stan {{ o.booth }})</small><h2
@@ -21,37 +29,30 @@
             {{ o.pickup_code }}
           </h2>
           <div>
-            Atas nama <strong>{{ o.customer_name|e }}</strong> • {{ o.payment_method|e }} • <em>
-              {{ o.payment_status }}
-            </em> • <strong class="price">Rp {{ o.total|number_format(0, ',', '.') }}</strong>
+            <strong class="price">Rp {{ o.total|number_format(0, ',', '.') }}</strong>
           </div>
           <div class="mt-1">
             Status: <span class="badge bg-warning text-white">{{ o.status }}</span>
           </div>
-        </div>
-      {% endfor %}
-      {% if orders[0].payment_method == 'QRIS' %}
-        {% if orders[0].qris_image %}
-          <div class="card p-3 mb-3 text-center">
-            <strong>Scan QRIS {{ orders[0].store_name|e }}</strong>
+          {% if o.payment_method == 'QRIS' and o.qris_image %}
             <div class="my-2">
               <img
-                src="{{ orders[0].qris_image|e }}"
-                alt="QRIS {{ orders[0].store_name|e }}"
-                style="max-width:280px;width:100%;border-radius:12px"
+                src="{{ o.qris_image|e }}"
+                alt="QRIS {{ o.store_name|e }}"
+                style="max-width:260px;width:100%;border-radius:12px"
               />
             </div>
-            <div>
-              <strong class="price">Rp {{ orders[0].total|number_format(0, ',', '.') }}</strong>
-              <small class="text-secondary"> • {{ orders[0].pickup_code }}</small>
+          {% elseif o.payment_method == 'QRIS' %}
+            <div class="alert alert-info mb-0 mt-2">
+              <i class="bi bi-qr-code-scan"></i> Scan QRIS di stan {{ o.booth }}, penjual akan menandai lunas.
             </div>
-          </div>
-        {% endif %}
-      {% else %}
-        <div class="alert alert-info">
-          <i class="bi bi-cash"></i> Siapkan uang tunai saat ambil di stan {{ orders[0].booth }}.
+          {% else %}
+            <div class="alert alert-info mb-0 mt-2">
+              <i class="bi bi-cash"></i> Siapkan uang tunai saat ambil di stan {{ o.booth }}.
+            </div>
+          {% endif %}
         </div>
-      {% endif %}
+      {% endfor %}
       <div class="card p-3 mb-3">
         <strong>Alur di lokasi:</strong><ol class="mb-0">
           <li>Datang ke stan sesuai kode ambil</li>
